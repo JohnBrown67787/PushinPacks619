@@ -1,0 +1,25 @@
+{
+  "storeName": "PushinPacks",
+  "whatsappNumber": "16195550199",
+  "currency": "USD",
+  "deliveryFeeUSD": 15,
+  "freeDeliveryThresholdUSD": 200,
+  "enabledPaymentMethods": [
+    "paypal",
+    "venmo",
+    "zelle",
+    "btc",
+    "cashapp",
+    "cod"
+  ],
+  "paymentInstructions": {
+    "paypal": "Send payment to our verified business PayPal: checkout@pushinpacks.com. State your Order Reference in the memo. Await confirmation on WhatsApp.",
+    "venmo": "Transfer to @PushinPacks-Desk on Venmo. Put your Order Reference in the payment memo. Submit confirmation screenshot on WhatsApp.",
+    "zelle": "Direct bank transfer to zelle@pushinpacks.com (Account: PushinPacks Logistics). Provide reference code to your WhatsApp representative.",
+    "btc": "Transfer exact BTC equivalent to verified wallet address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh. Confirmation requires 1 on-chain block.",
+    "cashapp": "Pay to $PushinPacks619 on Cash App. Include your order reference in the For line.",
+    "cod": "Cash on delivery authorized for pre-cleared postal routes. Have exact currency ready at delivery time."
+  },
+  "storeContactEmail": "ops@pushinpacks619.internal",
+  "storeLocation": "Pacific Coast Logistics Hub, San Diego, CA"
+}

@@ -1,0 +1,173 @@
+[
+  {
+    "id": "ord_1792772122381",
+    "orderReference": "PP-2026-84981",
+    "customer": {
+      "fullName": "Alexander Vance",
+      "phone": "+1 (555) 019-2834",
+      "email": "alexander@example.com",
+      "address": "124 Concord Ave, Suite 4B",
+      "city": "Dallas, TX"
+    },
+    "deliveryMethod": "delivery",
+    "delivery": {
+      "method": "delivery",
+      "address": "124 Concord Ave, Suite 4B",
+      "city": "Dallas, TX",
+      "notes": "Discreet exterior packaging requested"
+    },
+    "items": [
+      {
+        "productId": "pep-tirzepatide",
+        "productNameSnapshot": "Selected Item",
+        "name": "Selected Item",
+        "spec": "Standard",
+        "unitPriceSnapshot": 45,
+        "unitPrice": 45,
+        "quantity": 2,
+        "lineTotal": 90,
+        "portal": "peptides"
+      },
+      {
+        "productId": "bud-live-resin-1g",
+        "productNameSnapshot": "Selected Item",
+        "name": "Selected Item",
+        "spec": "Standard",
+        "unitPriceSnapshot": 45,
+        "unitPrice": 45,
+        "quantity": 1,
+        "lineTotal": 45,
+        "portal": "peptides"
+      }
+    ],
+    "orderSubtotal": 135,
+    "subtotal": 135,
+    "deliveryFee": 15,
+    "discount": 0,
+    "finalTotal": 150,
+    "total": 150,
+    "currency": "USD",
+    "selectedPaymentMethod": "bitcoin",
+    "paymentMethod": "bitcoin",
+    "paymentStatus": "unpaid",
+    "orderStatus": "pending",
+    "customerNotes": "Discreet exterior packaging requested",
+    "createdAt": "2026-10-23T16:15:22.381Z",
+    "whatsappMessage": "*NEW ORDER: PP-2026-84981*\nStore: PushinPacks\nDate: 10/23/2026, 5:15:22 PM\n*CUSTOMER DETAILS:*\nName: Alexander Vance\nPhone: +1 (555) 019-2834\nEmail: alexander@example.com\nDelivery Method: Home Delivery\nAddress: 124 Concord Ave, Suite 4B, Dallas, TX\nNotes: Discreet exterior packaging requested\n*ORDERED ITEMS:*\n1. Selected Item (Standard)\n   Qty: 2 x $45.00 = $90.00\n2. Selected Item (Standard)\n   Qty: 1 x $45.00 = $45.00\n\n*PAYMENT & TOTALS:*\nPayment Method: BITCOIN\nSubtotal: $135.00\nDelivery Fee: $15.00\n*TOTAL: $150.00*\n\nPayment Status: unpaid\nPlease confirm this order and provide dispatch timeline.",
+    "whatsappUrl": "https://wa.me/16195550199?text=*NEW%20ORDER%3A%20PP-2026-84981*%0AStore%3A%20PushinPacks%0ADate%3A%2010%2F23%2F2026%2C%205%3A15%3A22%20PM%0A*CUSTOMER%20DETAILS%3A*%0AName%3A%20Alexander%20Vance%0APhone%3A%20%2B1%20(555)%20019-2834%0AEmail%3A%20alexander%40example.com%0ADelivery%20Method%3A%20Home%20Delivery%0AAddress%3A%20124%20Concord%20Ave%2C%20Suite%204B%2C%20Dallas%2C%20TX%0ANotes%3A%20Discreet%20exterior%20packaging%20requested%0A*ORDERED%20ITEMS%3A*%0A1.%20Selected%20Item%20(Standard)%0A%20%20%20Qty%3A%202%20x%20%2445.00%20%3D%20%2490.00%0A2.%20Selected%20Item%20(Standard)%0A%20%20%20Qty%3A%201%20x%20%2445.00%20%3D%20%2445.00%0A%0A*PAYMENT%20%26%20TOTALS%3A*%0APayment%20Method%3A%20BITCOIN%0ASubtotal%3A%20%24135.00%0ADelivery%20Fee%3A%20%2415.00%0A*TOTAL%3A%20%24150.00*%0A%0APayment%20Status%3A%20unpaid%0APlease%20confirm%20this%20order%20and%20provide%20dispatch%20timeline."
+  },
+  {
+    "id": "ord_1792772050119",
+    "orderReference": "PP-2026-79553",
+    "customer": {
+      "fullName": "Alexander Vance",
+      "phone": "+1 (555) 019-2834",
+      "email": "alexander@example.com",
+      "address": "124 Concord Ave, Suite 4B",
+      "city": "Dallas, TX"
+    },
+    "deliveryMethod": "delivery",
+    "delivery": {
+      "method": "delivery",
+      "address": "124 Concord Ave, Suite 4B",
+      "city": "Dallas, TX",
+      "notes": "Discreet exterior packaging requested"
+    },
+    "items": [
+      {
+        "productId": "pep-tirzepatide",
+        "productNameSnapshot": "Tirzepatide Dual Action",
+        "name": "Tirzepatide Dual Action",
+        "spec": "Standard",
+        "unitPriceSnapshot": 45,
+        "unitPrice": 45,
+        "quantity": 2,
+        "lineTotal": 90,
+        "portal": "peptides"
+      },
+      {
+        "productId": "bud-live-resin-1g",
+        "productNameSnapshot": "Live Resin Extract 1g",
+        "name": "Live Resin Extract 1g",
+        "spec": "Standard",
+        "unitPriceSnapshot": 45,
+        "unitPrice": 45,
+        "quantity": 1,
+        "lineTotal": 45,
+        "portal": "peptides"
+      }
+    ],
+    "orderSubtotal": 135,
+    "subtotal": 135,
+    "deliveryFee": 15,
+    "discount": 0,
+    "finalTotal": 150,
+    "total": 150,
+    "currency": "USD",
+    "selectedPaymentMethod": "bitcoin",
+    "paymentMethod": "bitcoin",
+    "paymentStatus": "unpaid",
+    "orderStatus": "pending",
+    "customerNotes": "Discreet exterior packaging requested",
+    "createdAt": "2026-10-23T16:14:10.119Z",
+    "whatsappMessage": "*NEW ORDER: PP-2026-79553*\nStore: PushinPacks\nDate: 10/23/2026, 5:14:10 PM\n*CUSTOMER DETAILS:*\nName: Alexander Vance\nPhone: +1 (555) 019-2834\nEmail: alexander@example.com\nDelivery Method: Home Delivery\nAddress: 124 Concord Ave, Suite 4B, Dallas, TX\nNotes: Discreet exterior packaging requested\n*ORDERED ITEMS:*\n1. Tirzepatide Dual Action (Standard)\n   Qty: 2 x $45.00 = $90.00\n2. Live Resin Extract 1g (Standard)\n   Qty: 1 x $45.00 = $45.00\n\n*PAYMENT & TOTALS:*\nPayment Method: BITCOIN\nSubtotal: $135.00\nDelivery Fee: $15.00\n*TOTAL: $150.00*\n\nPayment Status: unpaid\nPlease confirm this order and provide dispatch timeline.",
+    "whatsappUrl": "https://wa.me/16195550199?text=*NEW%20ORDER%3A%20PP-2026-79553*%0AStore%3A%20PushinPacks%0ADate%3A%2010%2F23%2F2026%2C%205%3A14%3A10%20PM%0A*CUSTOMER%20DETAILS%3A*%0AName%3A%20Alexander%20Vance%0APhone%3A%20%2B1%20(555)%20019-2834%0AEmail%3A%20alexander%40example.com%0ADelivery%20Method%3A%20Home%20Delivery%0AAddress%3A%20124%20Concord%20Ave%2C%20Suite%204B%2C%20Dallas%2C%20TX%0ANotes%3A%20Discreet%20exterior%20packaging%20requested%0A*ORDERED%20ITEMS%3A*%0A1.%20Tirzepatide%20Dual%20Action%20(Standard)%0A%20%20%20Qty%3A%202%20x%20%2445.00%20%3D%20%2490.00%0A2.%20Live%20Resin%20Extract%201g%20(Standard)%0A%20%20%20Qty%3A%201%20x%20%2445.00%20%3D%20%2445.00%0A%0A*PAYMENT%20%26%20TOTALS%3A*%0APayment%20Method%3A%20BITCOIN%0ASubtotal%3A%20%24135.00%0ADelivery%20Fee%3A%20%2415.00%0A*TOTAL%3A%20%24150.00*%0A%0APayment%20Status%3A%20unpaid%0APlease%20confirm%20this%20order%20and%20provide%20dispatch%20timeline.",
+    "updatedAt": "2026-10-23T19:28:16.933Z"
+  },
+  {
+    "id": "ord_1730000001",
+    "orderReference": "PP-2026-9481",
+    "customer": {
+      "fullName": "Marcus Vance",
+      "phone": "+16195551234",
+      "email": "vance.biolab@proton.me",
+      "address": "742 Evergreen Terrace",
+      "city": "San Diego"
+    },
+    "deliveryMethod": "delivery",
+    "delivery": {
+      "method": "delivery",
+      "address": "742 Evergreen Terrace",
+      "city": "San Diego",
+      "notes": "Discreet vacuum packaging requested."
+    },
+    "items": [
+      {
+        "productId": "pep-1",
+        "productNameSnapshot": "GHK-Cu Copper Peptide",
+        "name": "GHK-Cu Copper Peptide",
+        "spec": "50mg * 10 vials",
+        "unitPriceSnapshot": 24,
+        "unitPrice": 24,
+        "quantity": 2,
+        "lineTotal": 48,
+        "portal": "peptides"
+      },
+      {
+        "productId": "pep-9",
+        "productNameSnapshot": "SLU-PP-332 Metabolic",
+        "name": "SLU-PP-332 Metabolic",
+        "spec": "10mg * 10 vials",
+        "unitPriceSnapshot": 110,
+        "unitPrice": 110,
+        "quantity": 1,
+        "lineTotal": 110,
+        "portal": "peptides"
+      }
+    ],
+    "orderSubtotal": 158,
+    "subtotal": 158,
+    "deliveryFee": 15,
+    "discount": 0,
+    "finalTotal": 173,
+    "total": 173,
+    "currency": "USD",
+    "selectedPaymentMethod": "zelle",
+    "paymentMethod": "zelle",
+    "paymentStatus": "paid",
+    "orderStatus": "pending",
+    "customerNotes": "Discreet vacuum packaging requested.",
+    "createdAt": "2026-10-23T14:15:00.000Z",
+    "updatedAt": "2026-10-23T18:28:41.346Z"
+  }
+]

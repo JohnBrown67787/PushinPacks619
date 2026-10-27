@@ -1,0 +1,558 @@
+/* ============================================
+   HERO SHOWCASE
+   Spin, settle, then reveal callouts.
+   ============================================ */
+
+@property --ring-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.stage {
+  /* Timeline */
+  --spin-delay: 0.5s;
+  --spin-duration: 2.4s;
+  --reveal-start: 2.8s;
+  --stagger: 0.15s;
+  --reveal-end: calc(var(--reveal-start) + var(--callout-count, 4) * var(--stagger) + 0.4s);
+
+  --line-len: 22px;
+
+  position: relative;
+  perspective: 1600px;
+}
+
+/* Tilt layer: follows the mouse after the intro */
+.tilt {
+  position: relative;
+  perspective: 1400px;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.5s var(--ease-smooth);
+}
+
+/* ---- Spinning card ---- */
+.spinner {
+  position: relative;
+  transform-style: preserve-3d;
+  animation:
+    cardSpin var(--spin-duration) var(--spin-delay) both,
+    cardFloat 6s ease-in-out calc(var(--spin-delay) + var(--spin-duration)) infinite;
+}
+
+.face {
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  border: 1px solid var(--color-border-default);
+  border-top-color: var(--color-border-hover);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: var(--shadow-elevated);
+}
+
+.front {
+  position: relative;
+  background: rgba(18, 18, 24, 0.5);
+}
+
+/* Bottom fade so the footer card stays readable */
+.front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(5, 5, 7, 0.65) 100%);
+  pointer-events: none;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Floating badge on front face */
+.frontBadge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+  z-index: 2;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+
+.frontBadgeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+/* Light sweep across the glass */
+.sheen {
+  position: absolute;
+  inset: -20% -60%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.04) 45%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0.04) 55%,
+    transparent 60%
+  );
+  transform: translateX(-100%);
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+  animation: sheenSweep 8s var(--ease-smooth) calc(var(--spin-delay) + var(--spin-duration) * 0.7) infinite;
+}
+
+/* Back of the card, seen mid-spin */
+.back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-xl);
+  background:
+    radial-gradient(ellipse at 50% 35%, rgba(255, 255, 255, 0.08) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 32px),
+    linear-gradient(160deg, #14141b 0%, var(--color-bg-deep) 100%);
+}
+
+.backLabel {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--color-text-muted);
+}
+
+.backValue {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 12vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--color-text-primary);
+  margin-top: var(--space-sm-md);
+}
+
+.backCaption {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+}
+
+.backRule {
+  width: 48px;
+  height: 1px;
+  background: var(--color-border-active);
+  margin: var(--space-md-lg) 0;
+}
+
+.backName {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.backSpec {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: var(--space-xs);
+}
+
+/* ---- Rotating light ring around the card ---- */
+.ring {
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--radius-card) + 1px);
+  padding: 1px;
+  background: conic-gradient(
+    from var(--ring-angle),
+    transparent 0 65%,
+    rgba(255, 255, 255, 0.6) 82%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  animation:
+    showcaseFade 0.8s ease var(--reveal-start) forwards,
+    ringSpin 6s linear var(--reveal-start) infinite;
+}
+
+/* ---- Contact shadow under the card ---- */
+.floor {
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: -28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  filter: blur(6px);
+  pointer-events: none;
+  animation: floorPulse var(--spin-duration) var(--spin-delay) both;
+}
+
+/* ---- Callouts ---- */
+.callouts {
+  position: absolute;
+  inset: 0;
+  list-style: none;
+  pointer-events: none;
+  z-index: 3;
+  container-type: inline-size;
+}
+
+.callout {
+  position: absolute;
+  width: 0;
+  height: 0;
+  text-align: left;
+  --delay: calc(var(--reveal-start) + var(--i) * var(--stagger));
+}
+
+.dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-text-primary);
+  box-shadow: 0 0 0 3px rgba(5, 5, 7, 0.55), 0 0 12px rgba(255, 255, 255, 0.6);
+  transform: translate(-50%, -50%) scale(0);
+  animation: dotIn 0.4s var(--ease-bounce) var(--delay) forwards;
+}
+
+/* Expanding ping ring around each dot */
+.dot::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  animation: ping 2.6s ease-out calc(var(--delay) + 0.4s) infinite;
+}
+
+.line {
+  position: absolute;
+  top: 0;
+  width: var(--line-len);
+  height: 1px;
+  transform: scaleX(0);
+  animation: lineDraw 0.35s var(--ease-smooth) calc(var(--delay) + 0.15s) forwards;
+}
+
+.right .line {
+  left: 6px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.3));
+}
+
+.left .line {
+  right: 6px;
+  transform-origin: right center;
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.3));
+}
+
+.pill {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: max-content;
+  padding: var(--space-sm) var(--space-sm-md);
+  background: rgba(10, 10, 14, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-top-color: var(--color-border-active);
+  border-radius: var(--radius-card);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  animation: pillIn 0.45s var(--ease-smooth) calc(var(--delay) + 0.35s) forwards;
+}
+
+.right .pill {
+  left: calc(6px + var(--line-len));
+  max-width: calc((100 - var(--x)) * 1cqw - var(--line-len) - 16px);
+  --pill-from: -8px;
+}
+
+.left .pill {
+  right: calc(6px + var(--line-len));
+  max-width: calc(var(--x) * 1cqw - var(--line-len) - 16px);
+  align-items: flex-end;
+  text-align: right;
+  --pill-from: 8px;
+}
+
+.pillTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+.pillIndex {
+  font-family: var(--font-body);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  color: var(--color-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.pillDetail {
+  font-size: var(--text-2xs);
+  line-height: 1.35;
+  color: var(--color-text-muted);
+}
+
+/* ---- Footer card and replay button ---- */
+.footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0;
+  z-index: 4;
+  text-align: left;
+  opacity: 0;
+  animation: footerIn 0.5s var(--ease-smooth) var(--reveal-end) forwards;
+}
+
+.replay {
+  position: absolute;
+  top: var(--space-sm-md);
+  right: var(--space-sm-md);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(10, 10, 14, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  opacity: 0;
+  animation: showcaseFade 0.4s ease calc(var(--reveal-end) + 0.3s) forwards;
+  transition:
+    color var(--duration-fast) var(--ease-smooth),
+    border-color var(--duration-fast) var(--ease-smooth),
+    transform var(--duration-fast) var(--ease-smooth);
+}
+
+.replay:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-active);
+  transform: rotate(-30deg);
+}
+
+.replay:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   KEYFRAMES
+   ============================================ */
+
+@keyframes cardSpin {
+  0% {
+    transform: rotateY(0deg) scale(0.94);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
+  }
+  12% {
+    /* Anticipation: wind back slightly */
+    transform: rotateY(-18deg) scale(0.94);
+    animation-timing-function: cubic-bezier(0.55, 0, 0.25, 1);
+  }
+  70% {
+    /* Overshoot past a full turn */
+    transform: rotateY(372deg) scale(1.02);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.4, 1);
+  }
+  86% {
+    transform: rotateY(356deg) scale(1);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.4, 1);
+  }
+  100% {
+    transform: rotateY(360deg) scale(1);
+  }
+}
+
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes floorPulse {
+  0%, 12% { transform: scaleX(0.9); opacity: 0.7; }
+  30% { transform: scaleX(0.45); opacity: 0.4; }
+  50% { transform: scaleX(1.05); opacity: 0.9; }
+  62% { transform: scaleX(0.45); opacity: 0.4; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+
+@keyframes sheenSweep {
+  0% { transform: translateX(-100%); }
+  18%, 100% { transform: translateX(100%); }
+}
+
+@keyframes ringSpin {
+  to { --ring-angle: 360deg; }
+}
+
+@keyframes dotIn {
+  to { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes ping {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  70%, 100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes lineDraw {
+  to { transform: scaleX(1); }
+}
+
+@keyframes pillIn {
+  from {
+    opacity: 0;
+    transform: translate(var(--pill-from), -50%);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+    filter: blur(0);
+  }
+}
+
+@keyframes footerIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+/* Small screens: footer card sits below the image so it never covers the callouts */
+@media (max-width: 600px) {
+  .footer {
+    position: relative;
+    height: auto;
+    margin-top: var(--space-sm-md);
+  }
+
+  .floor {
+    display: none;
+  }
+
+  /* The card positions itself absolutely via inline styles; put it back in flow */
+  .footer > * {
+    position: relative !important;
+    inset: auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .stage {
+    --line-len: 14px;
+  }
+
+  .pill {
+    padding: 6px 9px;
+  }
+
+  .pillTitle {
+    font-size: var(--text-xs);
+  }
+
+  .pillDetail,
+  .pillIndex {
+    display: none;
+  }
+}
+
+/* Keep hidden pills from shifting while they wait to animate */
+.right .pill,
+.left .pill {
+  transform: translate(var(--pill-from), -50%);
+}
+
+/* ============================================
+   REDUCED MOTION: show the final state, no spin
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .floor,
+  .sheen,
+  .ring,
+  .dot::after {
+    animation: none;
+  }
+
+  .tilt {
+    transform: none;
+    transition: none;
+  }
+
+  .dot,
+  .line,
+  .pill,
+  .footer,
+  .replay {
+    animation: none;
+    opacity: 1;
+  }
+
+  .dot { transform: translate(-50%, -50%) scale(1); }
+  .line { transform: scaleX(1); }
+  .right .pill,
+  .left .pill { transform: translate(0, -50%); }
+  .replay { display: none; }
+}
+
+@keyframes showcaseFade {
+  to { opacity: 1; }
+}
