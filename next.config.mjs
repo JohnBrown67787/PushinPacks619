@@ -3,6 +3,11 @@ const nextConfig = {
   // Production optimizations
   productionBrowserSourceMaps: false,
 
+  // Partial Prerendering: Required for instant export
+  experimental: {
+    cacheComponents: true,
+  },
+
   // Image optimization - CRITICAL for performance
   images: {
     formats: ['image/avif', 'image/webp'],

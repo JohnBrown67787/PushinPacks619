@@ -1,0 +1,546 @@
+/* ============================================
+   PORTAL NAVBAR - FLUID & ADAPTIVE
+   Universal auto-responsive navigation
+   ============================================ */
+
+/* Navbar Container: Sticky header with fluid spacing */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: rgba(5, 5, 7, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-x: hidden;
+}
+
+/* Inner wrapper: Flex container with fluid padding */
+.navbarInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-fluid-md);
+  width: 100%;
+  padding: var(--space-fluid-sm-md) var(--container-fluid-padding);
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+/* ============================================
+   LOGO SECTION: Shrinks smoothly with space
+   ============================================ */
+
+.navLogo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-fluid-sm);
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.navLogoLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-fluid-xs);
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+  white-space: nowrap;
+  transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+
+.navLogoLink:hover {
+  opacity: 0.8;
+}
+
+.navLogoImg {
+  width: clamp(28px, 4vw, 36px);
+  height: clamp(28px, 4vw, 36px);
+  border-radius: var(--radius-fluid-sm);
+  flex-shrink: 0;
+}
+
+.navBrand {
+  font-family: var(--font-heading);
+  font-size: var(--text-fluid-sm);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.navBrandSub {
+  color: var(--color-text-muted);
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+/* ============================================
+   SPACER: Grows to push right items to edge
+   ============================================ */
+
+.navSpacer {
+  flex: 1;
+  min-width: var(--space-fluid-sm);
+}
+
+/* ============================================
+   MAIN NAVIGATION LINKS
+   Hidden on mobile, shown on larger screens
+   ============================================ */
+
+.navLinks {
+  display: none;
+  align-items: center;
+  gap: var(--gap-fluid-sm);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navLink,
+.navLinkActive {
+  padding: var(--space-fluid-xs) var(--space-fluid-md);
+  border-radius: var(--radius-fluid-md);
+  font-size: var(--text-fluid-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: all var(--duration-fast) var(--ease-smooth);
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navLink:hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.navLinkActive {
+  color: #ffffff;
+  font-weight: 600;
+  background: transparent;
+}
+
+/* Show nav links when there's enough space (container-based) */
+@container (min-width: 700px) {
+  .navLinks {
+    display: flex;
+  }
+}
+
+/* Fallback for browsers without container queries */
+@supports not (container-type: inline-size) {
+  @media (min-width: 768px) {
+    .navLinks {
+      display: flex;
+    }
+  }
+}
+
+/* ============================================
+   RIGHT ACTIONS: Responsive & Fluid
+   ============================================ */
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-fluid-sm);
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---- Portal Dropdown Switcher ---- */
+
+.portalDropdown {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.portalButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 1vw, 6px);
+  padding: clamp(6px, 1.5vw, 10px) clamp(8px, 2vw, 14px);
+  border-radius: var(--radius-fluid-md);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: var(--text-fluid-2xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-smooth);
+  white-space: nowrap;
+  min-height: 44px;
+  font-family: var(--font-body);
+}
+
+.portalButton:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.portalButton[data-active="true"] {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.portalLabel {
+  display: inline;
+}
+
+.portalChevron {
+  display: inline-flex;
+  align-items: center;
+  transition: transform var(--duration-fast) var(--ease-smooth);
+}
+
+.portalChevron[data-active="true"] {
+  transform: rotate(180deg);
+}
+
+/* Portal Dropdown Menu */
+.portalMenu {
+  position: absolute;
+  top: calc(100% + var(--space-fluid-sm));
+  right: 0;
+  min-width: clamp(200px, 90vw, 280px);
+  background: #0d0d12;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-fluid-lg);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+  padding: var(--space-fluid-xs);
+  z-index: 1000;
+  backdrop-filter: blur(16px);
+  animation: slideDown 0.15s ease-out;
+}
+
+.portalMenuLabel {
+  font-size: var(--text-fluid-2xs);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text-muted);
+  padding: var(--space-fluid-xs) var(--space-fluid-sm);
+  font-weight: 700;
+}
+
+.portalMenuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-fluid-xs);
+  padding: var(--space-fluid-xs) var(--space-fluid-sm);
+  border-radius: var(--radius-fluid-md);
+  font-size: var(--text-fluid-2xs);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: all var(--duration-fast) var(--ease-smooth);
+  white-space: nowrap;
+  min-height: 40px;
+}
+
+.portalMenuItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary);
+}
+
+.portalMenuItem[data-active="true"] {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* ---- Cart Button ---- */
+
+.cartButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 1vw, 6px);
+  padding: clamp(6px, 1.5vw, 10px) clamp(8px, 2vw, 14px);
+  border-radius: var(--radius-fluid-md);
+  background: var(--color-text-primary);
+  color: var(--color-bg-deep);
+  border: none;
+  font-size: var(--text-fluid-2xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-smooth);
+  white-space: nowrap;
+  min-height: 44px;
+  font-family: var(--font-body);
+  flex-shrink: 0;
+}
+
+.cartButton:hover {
+  background: #ffffff;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.cartButton:active {
+  transform: translateY(0);
+}
+
+.cartLabel {
+  display: inline;
+}
+
+.cartBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #050507;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: clamp(2px, 0.5vw, 3px) clamp(4px, 1vw, 6px);
+  font-size: clamp(10px, 1.5vw, 11px);
+  font-weight: 700;
+  line-height: 1;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ---- Checkout Button ---- */
+
+.checkoutButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(6px, 1.5vw, 10px) clamp(10px, 2vw, 16px);
+  border-radius: var(--radius-fluid-md);
+  background: var(--color-brand-green);
+  color: #ffffff;
+  border: none;
+  font-size: var(--text-fluid-2xs);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-smooth);
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: 44px;
+  font-family: var(--font-body);
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+  flex-shrink: 0;
+}
+
+.checkoutButton:hover {
+  background: var(--color-brand-green-hover);
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
+  transform: translateY(-1px);
+}
+
+.checkoutButton:active {
+  transform: translateY(0);
+}
+
+/* Hide checkout on smaller screens, show on larger ones */
+@media (max-width: 1024px) {
+  .checkoutButton {
+    display: none;
+  }
+}
+
+/* ---- Mobile Menu Toggle ---- */
+
+.mobileMenuToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(40px, 10vw, 48px);
+  height: clamp(40px, 10vw, 48px);
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: var(--radius-fluid-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: var(--text-fluid-lg);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-smooth);
+  font-family: var(--font-body);
+  flex-shrink: 0;
+}
+
+.mobileMenuToggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.mobileMenuToggle[data-active="true"] {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Show menu toggle only on smaller screens */
+@media (min-width: 1024px) {
+  .mobileMenuToggle {
+    display: none;
+  }
+}
+
+/* Hide nav links and show hamburger at small sizes */
+@container (max-width: 699px) {
+  .navLinks {
+    display: none;
+  }
+}
+
+@supports not (container-type: inline-size) {
+  @media (max-width: 767px) {
+    .navLinks {
+      display: none;
+    }
+  }
+}
+
+/* ============================================
+   MOBILE MENU: Adaptive panel
+   ============================================ */
+
+.mobileMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: #0a0a0f;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: var(--space-fluid-md) var(--container-fluid-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-fluid-sm);
+  z-index: 999;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7);
+  animation: slideDown 0.25s ease-out;
+}
+
+.mobileMenuItem,
+.mobileCheckout {
+  padding: var(--space-fluid-sm-md) var(--space-fluid-md);
+  border-radius: var(--radius-fluid-md);
+  font-size: var(--text-fluid-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--duration-fast) var(--ease-smooth);
+  white-space: nowrap;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.mobileMenuItem {
+  color: var(--color-text-secondary);
+  background: transparent;
+}
+
+.mobileMenuItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text-primary);
+}
+
+.mobileMenuItem[data-active="true"] {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 700;
+}
+
+.mobileCheckout {
+  color: #ffffff;
+  background: var(--color-brand-green);
+  font-weight: 700;
+  justify-content: center;
+  text-align: center;
+  margin-top: var(--space-fluid-xs);
+}
+
+.mobileCheckout:hover {
+  background: var(--color-brand-green-hover);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  transform: translateY(-1px);
+}
+
+.mobileCheckout:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY & TOUCH TARGETS
+   ============================================ */
+
+.navButton,
+.cartButton,
+.checkoutButton,
+.mobileMenuToggle,
+.portalButton,
+.mobileMenuItem,
+.mobileCheckout {
+  /* All interactive elements meet 44x44px minimum */
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Focus visible for keyboard navigation */
+.navLink:focus-visible,
+.navLinkActive:focus-visible,
+.cartButton:focus-visible,
+.checkoutButton:focus-visible,
+.mobileMenuToggle:focus-visible,
+.portalButton:focus-visible,
+.portalMenuItem:focus-visible,
+.mobileMenuItem:focus-visible,
+.mobileCheckout:focus-visible {
+  outline: 2px solid var(--color-brand-green);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .navbar {
+    position: static;
+    background: white;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .navbarInner {
+    padding: 12px 20px;
+  }
+
+  .mobileMenuToggle,
+  .mobileMenu,
+  .cartButton {
+    display: none;
+  }
+}
