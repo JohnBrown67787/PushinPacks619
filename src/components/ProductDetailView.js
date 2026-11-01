@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./ProductDetailView.module.css";
+import { usePersistedCart } from "../hooks/usePersistedCart";
 import PortalNavbar from "./PortalNavbar";
 import PortalFooter from "./PortalFooter";
 import CartDrawer from "./CartDrawer";
@@ -21,38 +22,19 @@ import {
 
 export default function ProductDetailView({ catalog, productId }) {
   const router = useRouter();
-  const [cart, setCart] = useState([]);
+  const {
+    cart,
+    addToCart: hookAddToCart,
+    removeFromCart,
+    updateQuantity: hookUpdateQuantity,
+  } = usePersistedCart();
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [notification, setNotification] = useState("");
   const [purchaseMode, setPurchaseMode] = useState("onetime"); // "onetime" | "subscribe"
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("overview"); // "overview" | "lab" | "reconstitution" | "shipping"
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
-
-  // Load cart from localStorage
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("pushinpacks_cart");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          setCart(parsed);
-        }
-      }
-    } catch (e) {
-      console.warn("Could not read cart from localStorage", e);
-    }
-  }, []);
-
-  // Sync cart to localStorage whenever it changes
-  const saveCart = (newCart) => {
-    setCart(newCart);
-    try {
-      localStorage.setItem("pushinpacks_cart", JSON.stringify(newCart));
-    } catch (e) {
-      console.warn("Could not save cart to localStorage", e);
-    }
-  };
 
   // Find product in catalog
   const product = catalog.products.find((p) => p.id === productId) || catalog.products[0];
@@ -88,19 +70,10 @@ export default function ProductDetailView({ catalog, productId }) {
       image: productToAdd.image,
       category: productToAdd.category,
       purchaseMode: purchaseMode,
+      qty: qtyToAdd,
     };
 
-    let updatedCart;
-    const existingIndex = cart.findIndex((item) => item.id === itemToAdd.id && item.purchaseMode === purchaseMode);
-
-    if (existingIndex > -1) {
-      updatedCart = [...cart];
-      updatedCart[existingIndex].qty = (updatedCart[existingIndex].qty || 1) + qtyToAdd;
-    } else {
-      updatedCart = [...cart, { ...itemToAdd, qty: qtyToAdd }];
-    }
-
-    saveCart(updatedCart);
+    hookAddToCart(itemToAdd);
 
     if (directCheckout) {
       router.push("/checkout");
@@ -111,23 +84,6 @@ export default function ProductDetailView({ catalog, productId }) {
     }
   };
 
-  const updateQuantity = (id, delta) => {
-    const updated = cart
-      .map((item) => {
-        if (item.id === id) {
-          const newQty = (item.qty || 1) + delta;
-          return newQty > 0 ? { ...item, qty: newQty } : null;
-        }
-        return item;
-      })
-      .filter(Boolean);
-    saveCart(updated);
-  };
-
-  const removeFromCart = (id) => {
-    const updated = cart.filter((item) => item.id !== id);
-    saveCart(updated);
-  };
 
   const totalCartCount = cart.reduce((acc, item) => acc + (item.qty || item.quantity || 1), 0);
 
@@ -170,7 +126,7 @@ export default function ProductDetailView({ catalog, productId }) {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         cart={cart}
-        updateQuantity={updateQuantity}
+        updateQuantity={hookUpdateQuantity}
         removeFromCart={removeFromCart}
         onCheckout={() => {
           setIsCartOpen(false);

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "../app/shared.module.css";
+import { usePersistedCart } from "../hooks/usePersistedCart";
 import PortalNavbar from "./PortalNavbar";
 import PortalFooter from "./PortalFooter";
 import CartDrawer from "./CartDrawer";
@@ -19,9 +20,15 @@ export default function ProductsView({ catalog }) {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [notification, setNotification] = useState("");
+
+  const {
+    cart,
+    addToCart: hookAddToCart,
+    removeFromCart,
+    updateQuantity,
+  } = usePersistedCart();
 
   const portalPath = `/${catalog.slug}`;
   const categories = ["All", ...new Set(catalog.products.map((p) => p.category))];
@@ -41,36 +48,9 @@ export default function ProductsView({ catalog }) {
   });
 
   const addToCart = (product) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id ? { ...item, qty: item.qty + 1 } : item
-        );
-      }
-      return [...prev, { ...product, qty: 1 }];
-    });
-
+    hookAddToCart(product);
     setNotification(`Added ${product.name} to inquiry list`);
     setTimeout(() => setNotification(""), 2800);
-  };
-
-  const removeFromCart = (id) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const updateQuantity = (id, delta) => {
-    setCart((prev) =>
-      prev
-        .map((item) => {
-          if (item.id === id) {
-            const newQty = item.qty + delta;
-            return newQty > 0 ? { ...item, qty: newQty } : null;
-          }
-          return item;
-        })
-        .filter(Boolean)
-    );
   };
 
   const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
