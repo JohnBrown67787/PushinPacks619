@@ -421,7 +421,7 @@ export default function LandingView({ catalog }) {
           width: "100%",
           maxWidth: "1200px",
           margin: "0 auto",
-          padding: "var(--space-md-lg) 32px 60px",
+          padding: "var(--space-md-lg) clamp(14px, 4vw, 32px) clamp(36px, 6vw, 60px)",
         }}
       >
         <div
@@ -430,7 +430,7 @@ export default function LandingView({ catalog }) {
             backdropFilter: "blur(12px)",
             border: "1px solid rgba(255, 255, 255, 0.08)",
             borderRadius: "8px",
-            padding: "36px",
+            padding: "clamp(18px, 4vw, 36px)",
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
             gap: "28px",
@@ -489,7 +489,7 @@ export default function LandingView({ catalog }) {
           width: "100%",
           maxWidth: "1200px",
           margin: "0 auto",
-          padding: "0 32px 64px",
+          padding: "0 clamp(14px, 4vw, 32px) clamp(36px, 6vw, 64px)",
         }}
       >
         <div
@@ -497,7 +497,7 @@ export default function LandingView({ catalog }) {
             background: "rgba(18, 18, 24, 0.5)",
             border: "1px solid rgba(255, 255, 255, 0.08)",
             borderRadius: "8px",
-            padding: "36px",
+            padding: "clamp(18px, 4vw, 36px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",

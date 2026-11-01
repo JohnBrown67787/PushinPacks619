@@ -19,6 +19,7 @@ const PORTAL_LIST = [
 export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpenCart }) {
   const portalPath = `/${catalog.slug}`;
   const [isPortalDropdownOpen, setIsPortalDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   // Close dropdown on outside click
@@ -38,25 +39,36 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
     };
   }, [isPortalDropdownOpen]);
 
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth > 900) {
+        setIsMobileMenuOpen(false);
+      }
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <header className={styles.navbar}>
+    <header className={styles.navbar} style={{ position: "relative" }}>
       <div className={styles.navLogo}>
-        <Link href={portalPath} style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", color: "inherit" }}>
+        <Link href={portalPath} style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", color: "inherit", minWidth: 0 }}>
           <Image
             src="/logo.jpg"
             alt="PushinPacks Logo"
-            width={34}
-            height={34}
+            width={32}
+            height={32}
             className={styles.navLogoImg}
             priority
           />
-          <span className={styles.navBrand}>
+          <span className={styles.navBrand} style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             PushinPacks <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>/ {catalog.name}</span>
           </span>
         </Link>
       </div>
 
-      {/* Portal Navigation Links */}
+      {/* Desktop Portal Navigation Links */}
       <nav className={styles.navLinks}>
         <Link
           href={portalPath}
@@ -78,29 +90,30 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
         </Link>
       </nav>
 
-      {/* Hub Dropdown & Actions */}
-      <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm-md)" }}>
+      {/* Right Actions: Switcher, Cart & Mobile Menu Toggle */}
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
         {/* Custom Portals Dropdown Switcher */}
         <div ref={dropdownRef} style={{ position: "relative" }}>
           <button
             type="button"
             onClick={() => setIsPortalDropdownOpen((prev) => !prev)}
+            aria-label="Switch Catalog Portal"
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: "6px",
-              padding: "8px 14px",
+              gap: "5px",
+              padding: "7px 10px",
               borderRadius: "8px",
               background: isPortalDropdownOpen ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.04)",
               border: isPortalDropdownOpen ? "1px solid rgba(255, 255, 255, 0.25)" : "1px solid rgba(255, 255, 255, 0.08)",
               color: "#ffffff",
-              fontSize: "var(--text-xs)",
+              fontSize: "12px",
               fontWeight: 600,
               cursor: "pointer",
               transition: "all 0.2s ease",
             }}
           >
-            <span>Switch Portal</span>
+            <span>Portals</span>
             <span
               style={{
                 display: "inline-flex",
@@ -109,7 +122,7 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                 transition: "transform 0.2s ease",
               }}
             >
-              <IconChevronDown size={13} color="currentColor" />
+              <IconChevronDown size={12} color="#a1a1aa" />
             </span>
           </button>
 
@@ -162,18 +175,6 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                       textDecoration: "none",
                       transition: "all 0.15s ease",
                     }}
-                    onMouseEnter={(e) => {
-                      if (!isCurrent) {
-                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
-                        e.currentTarget.style.color = "#ffffff";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isCurrent) {
-                        e.currentTarget.style.background = "transparent";
-                        e.currentTarget.style.color = "var(--color-text-secondary)";
-                      }
-                    }}
                   >
                     <span>{item.name}</span>
                     {isCurrent && <IconCheck size={13} color="#25D366" />}
@@ -184,21 +185,29 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
           )}
         </div>
 
+        {/* Inquiry Cart Button */}
         <button
           onClick={onOpenCart}
           className={styles.navCta}
-          style={{ display: "flex", alignItems: "center", gap: "8px" }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            padding: "7px 12px",
+            borderRadius: "8px",
+          }}
+          aria-label="View Inquiry Cart"
         >
           <IconCart size={16} color="var(--color-bg-deep)" />
-          <span>Inquiry Cart</span>
+          <span className="cartLabel">Cart</span>
           {cartCount > 0 && (
             <span
               style={{
                 background: "#050507",
                 color: "#ffffff",
                 borderRadius: "10px",
-                padding: "1px 7px",
-                fontSize: "var(--text-2xs)",
+                padding: "1px 6px",
+                fontSize: "11px",
                 fontWeight: 700,
               }}
             >
@@ -207,25 +216,131 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
           )}
         </button>
 
+        {/* Desktop Express Checkout Link */}
         <Link
           href="/checkout"
+          className="desktopOnly"
           style={{
-            display: "inline-flex",
             alignItems: "center",
-            padding: "8px 14px",
+            padding: "7px 12px",
             borderRadius: "8px",
             background: "var(--color-brand-green)",
             color: "#ffffff",
-            fontSize: "var(--text-xs)",
+            fontSize: "12px",
             textDecoration: "none",
             fontWeight: 700,
             boxShadow: "0 2px 8px rgba(var(--color-brand-green-rgb), 0.3)",
-            transition: "all 0.2s ease",
+            whiteSpace: "nowrap",
           }}
         >
-          Express Checkout
+          Checkout
         </Link>
+
+        {/* Mobile Hamburger Menu Toggle */}
+        <button
+          type="button"
+          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+          className="mobileOnly"
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "8px 10px",
+            borderRadius: "8px",
+            background: isMobileMenuOpen ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.05)",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+            color: "#ffffff",
+            fontSize: "16px",
+            cursor: "pointer",
+            lineHeight: 1,
+          }}
+        >
+          {isMobileMenuOpen ? "✕" : "☰"}
+        </button>
       </div>
+
+      {/* Mobile Slide-Down Menu */}
+      {isMobileMenuOpen && (
+        <div
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            right: 0,
+            background: "#0a0a0f",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
+            padding: "16px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+            zIndex: 999,
+            boxShadow: "0 16px 32px rgba(0, 0, 0, 0.7)",
+          }}
+        >
+          <Link
+            href={portalPath}
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{
+              padding: "10px 14px",
+              borderRadius: "6px",
+              color: activeTab === "home" ? "#ffffff" : "var(--color-text-secondary)",
+              background: activeTab === "home" ? "rgba(255, 255, 255, 0.08)" : "transparent",
+              fontSize: "14px",
+              fontWeight: activeTab === "home" ? 700 : 500,
+              textDecoration: "none",
+            }}
+          >
+            Landing Page
+          </Link>
+          <Link
+            href={`${portalPath}/products`}
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{
+              padding: "10px 14px",
+              borderRadius: "6px",
+              color: activeTab === "products" ? "#ffffff" : "var(--color-text-secondary)",
+              background: activeTab === "products" ? "rgba(255, 255, 255, 0.08)" : "transparent",
+              fontSize: "14px",
+              fontWeight: activeTab === "products" ? 700 : 500,
+              textDecoration: "none",
+            }}
+          >
+            Browse Products ({catalog.products?.length || 0})
+          </Link>
+          <Link
+            href={`${portalPath}/faq`}
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{
+              padding: "10px 14px",
+              borderRadius: "6px",
+              color: activeTab === "faq" ? "#ffffff" : "var(--color-text-secondary)",
+              background: activeTab === "faq" ? "rgba(255, 255, 255, 0.08)" : "transparent",
+              fontSize: "14px",
+              fontWeight: activeTab === "faq" ? 700 : 500,
+              textDecoration: "none",
+            }}
+          >
+            Frequently Asked Questions
+          </Link>
+          <Link
+            href="/checkout"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{
+              padding: "10px 14px",
+              borderRadius: "6px",
+              color: "#ffffff",
+              background: "var(--color-brand-green)",
+              fontSize: "14px",
+              fontWeight: 700,
+              textDecoration: "none",
+              textAlign: "center",
+              marginTop: "4px",
+            }}
+          >
+            Express Checkout →
+          </Link>
+        </div>
+      )}
     </header>
   );
 }

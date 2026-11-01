@@ -16,7 +16,7 @@ export default function PortalFooter({ catalog }) {
   return (
     <footer style={{ marginTop: "auto", borderTop: "1px solid rgba(255, 255, 255, 0.06)", background: "rgba(5, 5, 7, 0.9)" }}>
       {/* Portals Network Cross-Navigation */}
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "48px 32px 24px" }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "clamp(32px, 6vw, 48px) clamp(16px, 4vw, 32px) 24px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "32px", flexWrap: "wrap", marginBottom: "32px" }}>
           <div>
             <div style={{ fontFamily: "var(--font-heading)", fontSize: "var(--text-base)", fontWeight: 700, color: "#ffffff", marginBottom: "8px" }}>

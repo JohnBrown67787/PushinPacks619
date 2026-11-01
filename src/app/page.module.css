@@ -262,10 +262,10 @@
 
 @media (max-width: 640px) {
   .navbar {
-    padding: 14px 20px;
+    padding: 14px 16px;
   }
   .catalogSection {
-    padding: 40px 20px 32px;
+    padding: 36px 16px 28px;
   }
   .catalogGrid {
     grid-template-columns: 1fr;
@@ -273,6 +273,25 @@
   }
   .catalogCard {
     padding: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 10px 12px;
+  }
+  .navBrand {
+    font-size: 0.95rem;
+  }
+  .navActions {
+    gap: 8px;
+  }
+  .checkoutBtn, .adminBtn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  .catalogSection {
+    padding: 24px 12px 20px;
   }
 }
 

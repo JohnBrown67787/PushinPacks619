@@ -693,7 +693,7 @@ export default function CatalogView({ catalog }) {
           width: "100%",
           maxWidth: "1200px",
           margin: "0 auto",
-          padding: "40px 32px 80px",
+          padding: "clamp(24px, 5vw, 40px) clamp(14px, 4vw, 32px) clamp(40px, 8vw, 80px)",
         }}
       >
         <div
@@ -701,7 +701,7 @@ export default function CatalogView({ catalog }) {
             background: "rgba(18, 18, 24, 0.5)",
             border: "1px solid rgba(255, 255, 255, 0.08)",
             borderRadius: "8px",
-            padding: "36px",
+            padding: "clamp(20px, 4vw, 36px)",
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
             gap: "24px",
@@ -760,7 +760,7 @@ export default function CatalogView({ catalog }) {
           width: "100%",
           maxWidth: "1200px",
           margin: "0 auto",
-          padding: "0 32px 60px",
+          padding: "0 clamp(14px, 4vw, 32px) clamp(36px, 6vw, 60px)",
           textAlign: "center",
         }}
       >

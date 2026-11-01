@@ -13,6 +13,12 @@ const outfit = Outfit({
   display: "swap",
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata = {
   title: "PushinPacks619",
   description: "PushinPacks619 - Premium catalogs and collections",
