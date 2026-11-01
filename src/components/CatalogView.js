@@ -506,6 +506,7 @@ export default function CatalogView({ catalog }) {
                   src={item.image || catalog.heroImage}
                   alt={item.title}
                   fill
+                  loading="lazy"
                   sizes="(max-width: 768px) 100vw, 400px"
                   style={{ objectFit: "cover", opacity: 0.4 }}
                 />
@@ -615,7 +616,7 @@ export default function CatalogView({ catalog }) {
 
         {/* Product Grid */}
         <div className={styles.productGrid}>
-          {filteredProducts.map((product) => (
+          {filteredProducts.map((product, idx) => (
             <div key={product.id} className={styles.productCard}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px", gap: "8px" }}>
                 <div className={styles.productCategory} style={{ marginBottom: 0 }}>{product.category}</div>
@@ -646,7 +647,8 @@ export default function CatalogView({ catalog }) {
                     src={product.image}
                     alt={product.name}
                     fill
-                    sizes="(max-width: 768px) 100vw, 240px"
+                    loading={idx < 4 ? "eager" : "lazy"}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 240px"
                     style={{ objectFit: "cover" }}
                   />
                 </div>

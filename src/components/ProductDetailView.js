@@ -639,7 +639,8 @@ export default function ProductDetailView({ catalog, productId }) {
                         src={relItem.image}
                         alt={relItem.name}
                         fill
-                        sizes="(max-width: 768px) 100vw, 240px"
+                        loading="lazy"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 240px"
                         style={{ objectFit: "cover" }}
                       />
                     )}

@@ -1,10 +1,17 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { IconWhatsApp, IconCashApp, IconVenmo, IconShield } from "./Icons";
 import styles from "./HubFooter.module.css";
 
 export default function HubFooter() {
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState(2026);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
 
   return (
     <footer className={styles.footerWrapper} aria-label="PushinPacks Hub Footer">
@@ -18,6 +25,7 @@ export default function HubFooter() {
                 alt="PushinPacks Logo"
                 width={36}
                 height={36}
+                loading="lazy"
                 className={styles.brandLogo}
               />
               <span className={styles.brandName}>PUSHINPACKS619</span>

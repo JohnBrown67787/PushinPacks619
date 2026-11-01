@@ -59,10 +59,23 @@ const SLIDES = [
 
 export default function HeroSlideshow() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loadedSlides, setLoadedSlides] = useState(() => new Set([0]));
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % SLIDES.length);
   }, []);
+
+  useEffect(() => {
+    // Preload current and upcoming slide on demand, deferring the rest
+    setLoadedSlides((prev) => {
+      const nextIdx = (currentIndex + 1) % SLIDES.length;
+      if (prev.has(currentIndex) && prev.has(nextIdx)) return prev;
+      const updated = new Set(prev);
+      updated.add(currentIndex);
+      updated.add(nextIdx);
+      return updated;
+    });
+  }, [currentIndex]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -74,24 +87,28 @@ export default function HeroSlideshow() {
 
   return (
     <section className={styles.heroContainer} aria-label="PushinPacks Hero Slideshow">
-      {/* Background Slides Track */}
+      {/* Background Slides Track - Only initial slide rendered immediately, remaining deferred */}
       <div className={styles.slideTrack}>
-        {SLIDES.map((slide, idx) => (
-          <div
-            key={slide.src}
-            className={`${styles.slideItem} ${idx === currentIndex ? styles.slideActive : ""}`}
-            aria-hidden={idx !== currentIndex}
-          >
-            <Image
-              src={slide.src}
-              alt={slide.alt}
-              fill
-              priority={idx === 0}
-              sizes="100vw"
-              className={styles.slideImage}
-            />
-          </div>
-        ))}
+        {SLIDES.map((slide, idx) => {
+          if (!loadedSlides.has(idx)) return null;
+          return (
+            <div
+              key={slide.src}
+              className={`${styles.slideItem} ${idx === currentIndex ? styles.slideActive : ""}`}
+              aria-hidden={idx !== currentIndex}
+            >
+              <Image
+                src={slide.src}
+                alt={slide.alt}
+                fill
+                priority={idx === 0}
+                loading={idx === 0 ? "eager" : "lazy"}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1920px"
+                className={styles.slideImage}
+              />
+            </div>
+          );
+        })}
       </div>
 
       {/* Dark Vignettes & Contrast Overlays */}

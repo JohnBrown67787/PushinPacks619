@@ -260,6 +260,7 @@ export default function LandingView({ catalog }) {
                   src={item.image || catalog.heroImage}
                   alt={item.title}
                   fill
+                  loading="lazy"
                   sizes="(max-width: 768px) 100vw, 600px"
                   style={{ objectFit: "cover", opacity: 0.4 }}
                 />
@@ -344,7 +345,7 @@ export default function LandingView({ catalog }) {
 
         {/* 4 Preview Cards */}
         <div className={styles.productGrid}>
-          {catalog.products.slice(0, 4).map((product) => (
+          {catalog.products.slice(0, 4).map((product, idx) => (
             <div
               key={product.id}
               className={styles.productCard}
@@ -380,7 +381,8 @@ export default function LandingView({ catalog }) {
                     src={product.image}
                     alt={product.name}
                     fill
-                    sizes="(max-width: 768px) 100vw, 240px"
+                    loading={idx < 4 ? "eager" : "lazy"}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 240px"
                     style={{ objectFit: "cover" }}
                   />
                 </div>

@@ -138,6 +138,7 @@ export default function Home() {
                     alt={`${portal.name} Thumbnail`}
                     fill
                     sizes="64px"
+                    loading="lazy"
                     style={{ objectFit: "cover" }}
                     className={styles.catalogThumbImg}
                   />

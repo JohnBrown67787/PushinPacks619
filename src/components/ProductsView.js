@@ -224,7 +224,7 @@ export default function ProductsView({ catalog }) {
           </div>
         ) : (
           <div className={styles.productGrid}>
-            {filteredProducts.map((product) => (
+            {filteredProducts.map((product, idx) => (
               <div
                 key={product.id}
                 className={styles.productCard}
@@ -260,7 +260,8 @@ export default function ProductsView({ catalog }) {
                       src={product.image}
                       alt={product.name}
                       fill
-                      sizes="(max-width: 768px) 100vw, 260px"
+                      loading={idx < 4 ? "eager" : "lazy"}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 280px"
                       style={{ objectFit: "cover" }}
                     />
                   </div>

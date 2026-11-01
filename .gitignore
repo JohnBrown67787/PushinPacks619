@@ -43,4 +43,5 @@ next-env.d.ts
 # scratch and local assets
 scratch/
 RESOURCES/
+deleted_catalog_images/
 *.bak
