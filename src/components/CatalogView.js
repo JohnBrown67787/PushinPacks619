@@ -617,55 +617,66 @@ export default function CatalogView({ catalog }) {
         {/* Product Grid */}
         <div className={styles.productGrid}>
           {filteredProducts.map((product, idx) => (
-            <div key={product.id} className={styles.productCard}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px", gap: "8px" }}>
-                <div className={styles.productCategory} style={{ marginBottom: 0 }}>{product.category}</div>
-                {product.badge && (
-                  <span
-                    style={{
-                      background: "rgba(255, 255, 255, 0.06)",
-                      border: "1px solid rgba(255, 255, 255, 0.12)",
-                      color: "var(--color-text-secondary)",
-                      fontSize: "10px",
-                      fontWeight: 600,
-                      textTransform: "uppercase",
-                      letterSpacing: "1px",
-                      padding: "3px 8px",
-                      borderRadius: "20px",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {product.badge}
-                  </span>
-                )}
-              </div>
-
+            <div
+              key={product.id}
+              className={styles.productCard}
+              onClick={() => router.push(`/${catalog.slug}/products/${product.id}`)}
+              style={{ cursor: "pointer", display: "flex", flexDirection: "column" }}
+            >
               {product.image && (
                 <div className={styles.productImageWrap}>
-                  <div className={styles.productAmbient}></div>
                   <Image
                     src={product.image}
                     alt={product.name}
                     fill
                     loading={idx < 4 ? "eager" : "lazy"}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 240px"
-                    style={{ objectFit: "cover" }}
+                    style={{ objectFit: "contain", background: "#ffffff" }}
                   />
                 </div>
               )}
 
-              <h4 className={styles.productName}>{product.name}</h4>
+              <h4
+                className={styles.productName}
+                style={{
+                  fontSize: "var(--text-sm)",
+                  fontWeight: 600,
+                  marginBottom: "6px",
+                  lineHeight: 1.35,
+                  color: "#ffffff"
+                }}
+              >
+                {product.name}
+              </h4>
 
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-sm-md)", fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>
-                <span>{product.spec}</span>
-                <span style={{ color: "var(--color-text-secondary)", fontWeight: 600 }}>{product.purity}</span>
-              </div>
+              {product.description && (
+                <p
+                  style={{
+                    fontSize: "var(--text-xs)",
+                    color: "var(--color-text-muted)",
+                    lineHeight: 1.4,
+                    marginBottom: "14px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                  title={product.description}
+                >
+                  {product.description}
+                </p>
+              )}
 
-              <div className={styles.productFooter} style={{ marginTop: "auto" }}>
-                <div className={styles.productPrice}>{product.price}</div>
+              <div className={styles.productFooter} style={{ marginTop: "auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div className={styles.productPrice} style={{ fontSize: "var(--text-base)", fontWeight: 700, color: "#ffffff" }}>
+                  {product.price}
+                </div>
                 <button
-                  onClick={() => addToCart(product)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addToCart(product);
+                  }}
                   className={styles.productAction}
+                  aria-label={`Add ${product.name} to cart`}
                 >
                   + Add
                 </button>

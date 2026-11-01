@@ -208,11 +208,6 @@ export default function ProductDetailView({ catalog, productId }) {
           {/* Left Column: Visual Showcase */}
           <div className={styles.visualCol}>
             <div className={styles.mainImageCard}>
-              <div className={styles.imageOverlayBadges}>
-                <span className={styles.purityPill}>{product.purity || "99.8% HPLC Certified"}</span>
-                <span className={styles.badgePill}>{product.badge || "Verified Batch"}</span>
-              </div>
-
               {product.image ? (
                 <Image
                   src={product.image}
@@ -220,18 +215,11 @@ export default function ProductDetailView({ catalog, productId }) {
                   fill
                   priority
                   sizes="(max-width: 960px) 100vw, 560px"
-                  style={{ objectFit: "cover" }}
+                  style={{ objectFit: "contain", background: "#ffffff", padding: "16px" }}
                 />
               ) : (
                 <div style={{ color: "var(--color-text-muted)" }}>Image Not Available</div>
               )}
-
-              <div className={styles.ambientGlow} />
-
-              <div className={styles.imageBottomBar}>
-                <span className={styles.imageBottomText}>{product.spec}</span>
-                <span className={styles.verifiedCertText}>HPLC Lab Verified</span>
-              </div>
             </div>
 
             {/* Quick Specs Chips */}

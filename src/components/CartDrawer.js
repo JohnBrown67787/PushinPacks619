@@ -142,8 +142,8 @@ export default function CartDrawer({ isOpen, onClose, cart = [], updateQuantity,
                   }}
                 >
                   {item.image && (
-                    <div style={{ position: "relative", width: "42px", height: "42px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, marginRight: "12px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                      <Image src={item.image} alt={item.name} fill sizes="42px" style={{ objectFit: "cover" }} />
+                    <div style={{ position: "relative", width: "42px", height: "42px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, marginRight: "12px", border: "1px solid rgba(255, 255, 255, 0.15)", background: "#ffffff", padding: "2px" }}>
+                      <Image src={item.image} alt={item.name} fill sizes="42px" style={{ objectFit: "contain", background: "#ffffff" }} />
                     </div>
                   )}
                   <div style={{ flex: 1, paddingRight: "8px" }}>
