@@ -415,6 +415,31 @@ h1, h2, h3, h4, h5, h6 {
    RESPONSIVE BASE & VIEWPORT
    ============================================ */
 
+/* Telegram Floating Hover Button */
+.telegramFloatingBtn {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.telegramFloatingBtn:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 10px 30px rgba(0, 136, 204, 0.6), 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+  background: linear-gradient(135deg, #0099e6 0%, #17b3ff 100%) !important;
+}
+
+.telegramFloatingBtn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+@media (max-width: 640px) {
+  .telegramFloatingBtn {
+    bottom: 18px !important;
+    right: 16px !important;
+    padding: 8px 14px 8px 12px !important;
+    font-size: 13px !important;
+    gap: 8px !important;
+  }
+}
+
 html, body {
   overflow-x: hidden;
   width: 100%;

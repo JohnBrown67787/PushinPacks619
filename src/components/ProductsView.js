@@ -82,7 +82,7 @@ export default function ProductsView({ catalog }) {
         <div
           style={{
             position: "fixed",
-            bottom: "24px",
+            bottom: "84px",
             right: "24px",
             zIndex: 1000,
             background: "rgba(20, 20, 26, 0.95)",

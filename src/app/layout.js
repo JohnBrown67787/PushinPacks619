@@ -1,5 +1,6 @@
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
+import TelegramFloatingButton from "../components/TelegramFloatingButton";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,7 +28,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <TelegramFloatingButton />
+      </body>
     </html>
   );
 }
