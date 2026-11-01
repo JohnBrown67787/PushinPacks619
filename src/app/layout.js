@@ -50,7 +50,7 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {children}
         <TelegramFloatingButton />
       </body>
