@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./admin.module.css";
+import AdminLogin from "../../components/AdminLogin";
 import CustomDropdown from "../../components/CustomDropdown";
 import { CATALOGS } from "../../data/catalogs";
 import {
@@ -23,6 +24,7 @@ import {
   IconShield,
   IconRefresh,
   IconWhatsApp,
+  IconTelegram,
   IconCopy,
   IconExternalLink,
   IconTruck,
@@ -32,9 +34,14 @@ import {
   IconPayPal,
   IconVenmo,
   IconZelle,
+  IconLogOut,
 } from "../../components/Icons";
 
 export default function AdminDashboard() {
+  // Authentication state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedPortal, setSelectedPortal] = useState("all");
 
@@ -93,9 +100,32 @@ export default function AdminDashboard() {
     }
   };
 
+  // Check authentication on mount
   useEffect(() => {
-    refreshAdminData();
+    const checkAuth = () => {
+      try {
+        const auth = localStorage.getItem("adminAuth");
+        if (auth) {
+          const parsed = JSON.parse(auth);
+          if (parsed.authenticated) {
+            setIsAuthenticated(true);
+          }
+        }
+      } catch (e) {
+        console.error("Auth check failed:", e);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    checkAuth();
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      refreshAdminData();
+    }
+  }, [isAuthenticated]);
 
   // ----------------------------------------------------
   // DYNAMIC INITIALIZATION & CLEARING HANDLERS
@@ -557,6 +587,31 @@ export default function AdminDashboard() {
 
   const combinedVolumeTotal = inquiriesVolumeTotal + ordersVolumeTotal;
 
+  // Show loading state while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #0f0f15 0%, #1a1a24 50%, #0f0f15 100%)",
+      }}>
+        <div style={{
+          textAlign: "center",
+          color: "white",
+        }}>
+          <p>Loading Admin Console...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login form if not authenticated
+  if (!isAuthenticated) {
+    return <AdminLogin onLoginSuccess={() => setIsAuthenticated(true)} />;
+  }
+
   return (
     <div className={styles.adminPage}>
       {/* Toast Notification */}
@@ -637,6 +692,19 @@ export default function AdminDashboard() {
             <span>View Public Hub</span>
             <IconArrowRight size={14} color="var(--color-text-muted)" />
           </Link>
+
+          <button
+            onClick={() => {
+              localStorage.removeItem("adminAuth");
+              setIsAuthenticated(false);
+            }}
+            className={styles.secondaryBtn}
+            style={{ color: "#f87171" }}
+            title="Logout from Admin Console"
+          >
+            <IconLogOut size={14} color="currentColor" />
+            <span>Logout</span>
+          </button>
         </div>
       </header>
 
@@ -1844,12 +1912,12 @@ export default function AdminDashboard() {
                                     fontWeight: 700,
                                     textTransform: "uppercase",
                                     letterSpacing: "0.5px",
-                                    background: "rgba(255, 255, 255, 0.05)",
-                                    color: "#ffffff",
-                                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                                    background: ord.checkoutChannel === "telegram" ? "rgba(0, 136, 204, 0.15)" : "rgba(255, 255, 255, 0.05)",
+                                    color: ord.checkoutChannel === "telegram" ? "#38bdf8" : "#ffffff",
+                                    border: ord.checkoutChannel === "telegram" ? "1px solid rgba(0, 136, 204, 0.3)" : "1px solid rgba(255, 255, 255, 0.12)",
                                   }}
                                 >
-                                  {ord.selectedPaymentMethod || ord.paymentMethod || "Direct"}
+                                  {ord.checkoutChannel === "telegram" ? "Telegram" : (ord.selectedPaymentMethod || ord.paymentMethod || "WhatsApp")}
                                 </span>
                               </td>
                               <td>
@@ -1897,16 +1965,29 @@ export default function AdminDashboard() {
                                   >
                                     <IconEye size={14} color="currentColor" />
                                   </button>
-                                  <a
-                                    href={`https://wa.me/${ord.customer?.phone?.replace(/[^0-9]/g, "")}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={styles.secondaryBtn}
-                                    style={{ padding: "7px 11px", color: "var(--color-brand-green)" }}
-                                    title="Chat on WhatsApp"
-                                  >
-                                    <IconWhatsApp size={14} color="#25D366" />
-                                  </a>
+                                  {ord.checkoutChannel === "telegram" ? (
+                                    <a
+                                      href={ord.telegramUrl || "https://t.me/packmans619_1"}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className={styles.secondaryBtn}
+                                      style={{ padding: "7px 11px", color: "#38bdf8" }}
+                                      title="Chat on Telegram"
+                                    >
+                                      <IconTelegram size={14} />
+                                    </a>
+                                  ) : (
+                                    <a
+                                      href={`https://wa.me/${ord.customer?.phone?.replace(/[^0-9]/g, "")}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className={styles.secondaryBtn}
+                                      style={{ padding: "7px 11px", color: "var(--color-brand-green)" }}
+                                      title="Chat on WhatsApp"
+                                    >
+                                      <IconWhatsApp size={14} color="#25D366" />
+                                    </a>
+                                  )}
                                 </div>
                               </td>
                             </tr>
@@ -2625,17 +2706,30 @@ export default function AdminDashboard() {
             )}
 
             {/* Actions */}
-            <div style={{ display: "flex", gap: "10px" }}>
-              <a
-                href={`https://wa.me/${selectedOrder.customer?.phone?.replace(/[^0-9]/g, "")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.primaryBtn}
-                style={{ flex: 1, justifyContent: "center", background: "var(--color-brand-green)", color: "#ffffff" }}
-              >
-                <IconWhatsApp size={16} color="#ffffff" />
-                <span>Message Client on WhatsApp</span>
-              </a>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              {selectedOrder.checkoutChannel === "telegram" ? (
+                <a
+                  href={selectedOrder.telegramUrl || "https://t.me/packmans619_1"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.primaryBtn}
+                  style={{ flex: 1, minWidth: "200px", justifyContent: "center", background: "linear-gradient(135deg, #0088cc 0%, #0099e5 100%)", color: "#ffffff" }}
+                >
+                  <IconTelegram size={16} />
+                  <span>Message Client on Telegram</span>
+                </a>
+              ) : (
+                <a
+                  href={`https://wa.me/${selectedOrder.customer?.phone?.replace(/[^0-9]/g, "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.primaryBtn}
+                  style={{ flex: 1, minWidth: "200px", justifyContent: "center", background: "var(--color-brand-green)", color: "#ffffff" }}
+                >
+                  <IconWhatsApp size={16} color="#ffffff" />
+                  <span>Message Client on WhatsApp</span>
+                </a>
+              )}
               <button
                 type="button"
                 onClick={() => setSelectedOrder(null)}

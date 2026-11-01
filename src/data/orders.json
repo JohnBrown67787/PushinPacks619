@@ -1,1 +1,59 @@
-[]
+[
+  {
+    "id": "ord_1793535547779",
+    "orderReference": "PP-2026-42369",
+    "customer": {
+      "fullName": "Dr. Alexander Vance",
+      "phone": "+1 (619) 555-0199",
+      "email": "vance.biolab@proton.me",
+      "address": "124 Concord Ave, Suite 4B",
+      "city": "San Diego, CA"
+    },
+    "deliveryMethod": "delivery",
+    "delivery": {
+      "method": "delivery",
+      "address": "124 Concord Ave, Suite 4B",
+      "city": "San Diego, CA",
+      "notes": "Priority cold insulated dispatch requested"
+    },
+    "items": [
+      {
+        "productId": "pep-1",
+        "productNameSnapshot": "GHK-Cu Copper Peptide",
+        "name": "GHK-Cu Copper Peptide",
+        "spec": "50mg * 10 vials",
+        "unitPriceSnapshot": 24,
+        "unitPrice": 24,
+        "quantity": 2,
+        "lineTotal": 48,
+        "portal": "peptides"
+      },
+      {
+        "productId": "bud-1",
+        "productNameSnapshot": "Aura 510 Ceramic Cartridge",
+        "name": "Aura 510 Ceramic Cartridge",
+        "spec": "1.0ml Live Resin",
+        "unitPriceSnapshot": 45,
+        "unitPrice": 45,
+        "quantity": 1,
+        "lineTotal": 45,
+        "portal": "budcart"
+      }
+    ],
+    "orderSubtotal": 93,
+    "subtotal": 93,
+    "deliveryFee": 15,
+    "discount": 0,
+    "finalTotal": 108,
+    "total": 108,
+    "currency": "USD",
+    "selectedPaymentMethod": "bitcoin",
+    "paymentMethod": "bitcoin",
+    "paymentStatus": "paid",
+    "orderStatus": "confirmed",
+    "customerNotes": "Priority cold insulated dispatch requested",
+    "createdAt": "2026-11-01T12:19:07.780Z",
+    "whatsappMessage": "*NEW ORDER: PP-2026-42369*\nStore: PushinPacks\nDate: 11/1/2026, 4:19:07 AM\n*CUSTOMER DETAILS:*\nName: Dr. Alexander Vance\nPhone: +1 (619) 555-0199\nEmail: vance.biolab@proton.me\nDelivery Method: Home Delivery\nAddress: 124 Concord Ave, Suite 4B, San Diego, CA\nNotes: Priority cold insulated dispatch requested\n*ORDERED ITEMS:*\n1. GHK-Cu Copper Peptide (50mg * 10 vials)\n   Qty: 2 x $24.00 = $48.00\n2. Aura 510 Ceramic Cartridge (1.0ml Live Resin)\n   Qty: 1 x $45.00 = $45.00\n\n*PAYMENT & TOTALS:*\nPayment Method: BITCOIN\nSubtotal: $93.00\nDelivery Fee: $15.00\n*TOTAL: $108.00*\n\nPayment Status: paid\nPlease confirm this order and provide dispatch timeline.",
+    "whatsappUrl": "https://wa.me/16195550199?text=*NEW%20ORDER%3A%20PP-2026-42369*%0AStore%3A%20PushinPacks%0ADate%3A%2011%2F1%2F2026%2C%204%3A19%3A07%20AM%0A*CUSTOMER%20DETAILS%3A*%0AName%3A%20Dr.%20Alexander%20Vance%0APhone%3A%20%2B1%20(619)%20555-0199%0AEmail%3A%20vance.biolab%40proton.me%0ADelivery%20Method%3A%20Home%20Delivery%0AAddress%3A%20124%20Concord%20Ave%2C%20Suite%204B%2C%20San%20Diego%2C%20CA%0ANotes%3A%20Priority%20cold%20insulated%20dispatch%20requested%0A*ORDERED%20ITEMS%3A*%0A1.%20GHK-Cu%20Copper%20Peptide%20(50mg%20*%2010%20vials)%0A%20%20%20Qty%3A%202%20x%20%2424.00%20%3D%20%2448.00%0A2.%20Aura%20510%20Ceramic%20Cartridge%20(1.0ml%20Live%20Resin)%0A%20%20%20Qty%3A%201%20x%20%2445.00%20%3D%20%2445.00%0A%0A*PAYMENT%20%26%20TOTALS%3A*%0APayment%20Method%3A%20BITCOIN%0ASubtotal%3A%20%2493.00%0ADelivery%20Fee%3A%20%2415.00%0A*TOTAL%3A%20%24108.00*%0A%0APayment%20Status%3A%20paid%0APlease%20confirm%20this%20order%20and%20provide%20dispatch%20timeline."
+  }
+]
