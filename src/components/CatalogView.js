@@ -431,8 +431,9 @@ export default function CatalogView({ catalog }) {
               alt={`${catalog.name} Hero`}
               width={480}
               height={480}
-              style={{ width: "100%", height: "auto", display: "block", borderRadius: "8px" }}
+              quality={85}
               priority
+              style={{ width: "100%", height: "auto", display: "block", borderRadius: "8px" }}
             />
 
             {/* Floating Glass Preview Card overlaying hero */}
@@ -507,6 +508,7 @@ export default function CatalogView({ catalog }) {
                   alt={item.title}
                   fill
                   loading="lazy"
+                  quality={80}
                   sizes="(max-width: 768px) 100vw, 400px"
                   style={{ objectFit: "cover", opacity: 0.4 }}
                 />

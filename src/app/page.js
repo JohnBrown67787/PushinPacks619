@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import styles from "./page.module.css";
 import {
   IconMicroscope,
@@ -12,7 +13,12 @@ import {
 } from "../components/Icons";
 import HeroSlideshow from "../components/HeroSlideshow";
 import ProductDisclaimer from "../components/ProductDisclaimer";
-import HubFooter from "../components/HubFooter";
+
+// Performance: Lazy load footer (below-fold component)
+const HubFooter = dynamic(() => import("../components/HubFooter"), {
+  loading: () => <div style={{ height: "200px", background: "rgba(18,18,24,0.5)" }} />,
+  ssr: true,
+});
 
 const PORTALS = [
   {

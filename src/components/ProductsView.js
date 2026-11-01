@@ -240,6 +240,7 @@ export default function ProductsView({ catalog }) {
                       alt={product.name}
                       fill
                       loading={idx < 4 ? "eager" : "lazy"}
+                      quality={70}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 280px"
                       style={{ objectFit: "contain", background: "#ffffff" }}
                     />

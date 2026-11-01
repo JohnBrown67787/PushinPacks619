@@ -214,6 +214,7 @@ export default function ProductDetailView({ catalog, productId }) {
                   alt={product.name}
                   fill
                   priority
+                  quality={85}
                   sizes="(max-width: 960px) 100vw, 560px"
                   style={{ objectFit: "contain", background: "#ffffff", padding: "16px" }}
                 />
@@ -628,6 +629,7 @@ export default function ProductDetailView({ catalog, productId }) {
                         alt={relItem.name}
                         fill
                         loading="lazy"
+                        quality={70}
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 240px"
                         style={{ objectFit: "cover" }}
                       />
