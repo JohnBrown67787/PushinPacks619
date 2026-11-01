@@ -1,0 +1,55 @@
+.card {
+  border-radius: var(--radius-card);
+  transition: all var(--duration-normal) var(--ease-smooth);
+  padding: var(--space-md);
+}
+
+/* Variants */
+.default {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.elevated {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-card);
+}
+
+.outlined {
+  background: transparent;
+  border: 1px solid var(--color-border-default);
+}
+
+/* States */
+.hoverable {
+  cursor: pointer;
+}
+
+.hoverable:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-card-hover);
+  background: var(--color-bg-card-hover);
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:active {
+  transform: scale(0.98);
+}
+
+/* Focus visible for accessibility */
+.clickable:focus-visible {
+  outline: 2px solid var(--color-brand-green);
+  outline-offset: 2px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .card {
+    padding: var(--space-sm-md);
+    border-radius: 6px;
+  }
+}
