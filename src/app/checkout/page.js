@@ -219,18 +219,77 @@ export default function CheckoutPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Submit order & open WhatsApp
-  const handleCheckoutSubmit = async (e) => {
-    if (e) e.preventDefault();
+  // Generate professional invoice from current checkout data
+  const generateInvoice = () => {
+    const paymentMethodName = selectedPaymentInfo?.name || paymentMethod;
+
+    // Build product details section
+    let productDetails = '';
+    cartItems.forEach((item) => {
+      const itemPrice = Number(item.price) || 0;
+      const itemQty = Number(item.quantity) || 1;
+      const subtotal = itemPrice * itemQty;
+      productDetails += `Product: ${item.name}\nUnit Price: ${formatMoney(itemPrice)}\nQuantity: ${itemQty}\nSubtotal: ${formatMoney(subtotal)}\n\n`;
+    });
+
+    const deliveryMethodText = customer.deliveryMethod === 'delivery' ? 'Home Delivery' : 'Store Pickup';
+    const addressSection = customer.deliveryMethod === 'delivery'
+      ? `Address: ${customer.address}\nCity: ${customer.city}`
+      : `Pickup arrangements will be coordinated directly.`;
+
+    const invoice = `🧾 PUSHINPACKS619 – ORDER INVOICE
+
+━━━━━━━━━━━━━━━━━━
+PRODUCT DETAILS
+
+${productDetails}
+━━━━━━━━━━━━━━━━━━
+CUSTOMER INFORMATION
+
+Full Name: ${customer.fullName}
+WhatsApp: ${customer.phone}
+Email: ${customer.email || 'Not provided'}
+
+━━━━━━━━━━━━━━━━━━
+DELIVERY INFORMATION
+
+Method: ${deliveryMethodText}
+${addressSection}
+
+Delivery Fee: ${customer.deliveryMethod === 'delivery' ? formatMoney(calculations.deliveryFee) : 'FREE'}
+
+━━━━━━━━━━━━━━━━━━
+PAYMENT INFORMATION
+
+Payment Method: ${paymentMethodName}
+
+Additional Notes: ${notes || 'None'}
+
+━━━━━━━━━━━━━━━━━━
+ORDER TOTAL
+
+Total Amount: ${formatMoney(calculations.total)}
+
+Please confirm this order and provide the necessary payment instructions.
+
+Thank you for choosing PushinPacks619!`;
+
+    return invoice;
+  };
+
+  // Submit order & open WhatsApp or Telegram
+  const handleCheckoutSubmit = async (channel) => {
     if (isSubmitting) return; // Prevent duplicate clicks
 
     setSubmitError('');
+    setSubmittingChannel(channel);
 
     if (!validateForm()) {
       // Scroll to first error
       const firstErrorKey = Object.keys(errors)[0];
       const el = document.getElementById(firstErrorKey);
       if (el) el.focus();
+      setSubmittingChannel(null);
       return;
     }
 
@@ -252,7 +311,8 @@ export default function CheckoutPage() {
           })),
           paymentMethod,
           notes,
-          currency
+          currency,
+          channel
         })
       });
 
@@ -262,18 +322,49 @@ export default function CheckoutPage() {
         throw new Error(data.error || 'Failed to process checkout request');
       }
 
+      // Generate invoice from actual checkout data
+      const invoice = generateInvoice();
+
       // Order successfully created and saved in backend database
-      setCompletedOrder({
+      const completedData = {
         order: data.order,
-        whatsAppUrl: data.whatsAppUrl
-      });
+        channel,
+        whatsAppUrl: data.whatsAppUrl,
+        telegramUrl: data.telegramUrl
+      };
+
+      setCompletedOrder(completedData);
 
       // Clear the local cart now that the order reference is recorded
       updateCart([]);
 
-      // 2. Open WhatsApp official link in a new tab
-      if (data.whatsAppUrl) {
-        window.open(data.whatsAppUrl, '_blank', 'noopener,noreferrer');
+      // 2. Open WhatsApp or Telegram with invoice
+      if (channel === 'whatsapp' && data.whatsAppUrl) {
+        // Encode invoice for WhatsApp
+        const encodedMessage = encodeURIComponent(invoice);
+        const whatsappLink = `${data.whatsAppUrl}&text=${encodedMessage}`;
+        window.open(whatsappLink, '_blank', 'noopener,noreferrer');
+      } else if (channel === 'telegram' && data.telegramUrl) {
+        // For Telegram, send via backend API
+        try {
+          const telegramRes = await fetch('/api/telegram', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderReference: data.order?.orderReference,
+              invoice
+            })
+          });
+
+          if (telegramRes.ok) {
+            // Open Telegram app/web
+            window.open(data.telegramUrl, '_blank', 'noopener,noreferrer');
+          }
+        } catch (err) {
+          console.error('Telegram notification failed:', err);
+          // Still open Telegram for user to send message manually
+          window.open(data.telegramUrl, '_blank', 'noopener,noreferrer');
+        }
       }
 
     } catch (err) {
@@ -281,6 +372,7 @@ export default function CheckoutPage() {
       setSubmitError(err.message || 'An unexpected error occurred during checkout');
     } finally {
       setIsSubmitting(false);
+      setSubmittingChannel(null);
     }
   };
 

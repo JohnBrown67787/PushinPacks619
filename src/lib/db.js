@@ -316,6 +316,12 @@ export async function createOrder(payload) {
   if (paymentMethod === "btc") paymentMethod = "bitcoin";
   if (paymentMethod === "cod") paymentMethod = "cash";
 
+  // Normalize channel (whatsapp or telegram)
+  const channel = (payload.channel || "whatsapp").toLowerCase();
+  if (!["whatsapp", "telegram"].includes(channel)) {
+    throw new Error("Invalid checkout channel. Must be whatsapp or telegram.");
+  }
+
   // Server-side price recalculation (NEVER TRUST CLIENT PRICES)
   let subtotal = 0;
   const verifiedItems = [];
@@ -408,6 +414,8 @@ export async function createOrder(payload) {
 
   newOrder.whatsappMessage = whatsappMessage;
   newOrder.whatsappUrl = whatsAppUrl;
+  newOrder.checkoutChannel = channel;
+  newOrder.telegramUrl = config.telegramNumber || "https://t.me/packmans619_1";
 
   // Persist order to database
   const orders = getAllOrders();
@@ -418,6 +426,7 @@ export async function createOrder(payload) {
     success: true,
     order: newOrder,
     whatsAppUrl,
+    telegramUrl: newOrder.telegramUrl,
   };
 }
 

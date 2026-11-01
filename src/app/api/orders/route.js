@@ -42,7 +42,7 @@ export async function POST(request) {
       });
     }
 
-    const { customer, items, paymentMethod, notes, currency, checkoutChannel } = body;
+    const { customer, items, paymentMethod, notes, currency, channel } = body;
 
     // Validate request structure
     if (!customer) {
@@ -66,14 +66,22 @@ export async function POST(request) {
       );
     }
 
-    // Call server database order creation logic (handles validation, server-side price calculation, and WhatsApp URL generation)
+    // Validate channel (whatsapp or telegram)
+    if (!channel || !['whatsapp', 'telegram'].includes(channel)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid checkout channel. Must be whatsapp or telegram.' },
+        { status: 400 }
+      );
+    }
+
+    // Call server database order creation logic (handles validation, server-side price calculation, and messaging URL generation)
     const result = await createOrder({
       customer,
       items,
       paymentMethod,
       notes,
       currency,
-      checkoutChannel
+      channel
     });
 
     if (!result.success) {
@@ -87,7 +95,8 @@ export async function POST(request) {
       success: true,
       message: 'Order created successfully and saved to database',
       order: result.order,
-      whatsAppUrl: result.whatsAppUrl
+      whatsAppUrl: result.whatsAppUrl,
+      telegramUrl: result.telegramUrl || process.env.TELEGRAM_BOT_LINK || 'https://t.me/packmans619_1'
     }, { status: 201 });
   } catch (error) {
     console.error('Order creation error:', error);
