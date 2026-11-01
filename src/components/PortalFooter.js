@@ -22,9 +22,23 @@ export default function PortalFooter({ catalog }) {
             <div style={{ fontFamily: "var(--font-heading)", fontSize: "var(--text-base)", fontWeight: 700, color: "#ffffff", marginBottom: "8px" }}>
               PushinPacks {catalog.name}
             </div>
-            <p style={{ fontSize: "var(--text-sm)", color: "var(--color-text-muted)", maxWidth: "360px", lineHeight: 1.6 }}>
+            <p style={{ fontSize: "var(--text-sm)", color: "var(--color-text-muted)", maxWidth: "360px", lineHeight: 1.6, marginBottom: "12px" }}>
               {catalog.footerDesc || "Autonomous digital catalog system engineered for precision, certified quality, and discreet fulfillment."}
             </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "var(--text-xs)" }}>
+              <div style={{ color: "var(--color-text-muted)" }}>
+                Email:{" "}
+                <a href="mailto:Pushinpacks30@gmail.com" style={{ color: "#ffffff", textDecoration: "none", fontWeight: 600 }}>
+                  Pushinpacks30@gmail.com
+                </a>
+              </div>
+              <div style={{ color: "var(--color-text-muted)" }}>
+                Telegram:{" "}
+                <a href="https://t.me/packmans619_1" target="_blank" rel="noopener noreferrer" style={{ color: "#00a2ed", textDecoration: "none", fontWeight: 600 }}>
+                  https://t.me/packmans619_1
+                </a>
+              </div>
+            </div>
           </div>
 
           <div>

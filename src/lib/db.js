@@ -22,7 +22,9 @@ const DEFAULT_CONFIG = {
     cashapp: "Pay to $PushinPacks619 on Cash App. Include your order reference in the For line.",
     cod: "Cash on delivery authorized for pre-cleared postal routes. Have exact currency ready at delivery time.",
   },
-  storeContactEmail: "ops@pushinpacks619.internal",
+  storeContactEmail: "Pushinpacks30@gmail.com",
+  telegramNumber: "https://t.me/packmans619_1",
+  telegramHandle: "@packmans619_1",
   storeLocation: "Pacific Coast Logistics Hub, San Diego, CA",
 };
 

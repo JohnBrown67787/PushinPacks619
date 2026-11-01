@@ -876,6 +876,11 @@ export default function CheckoutPage() {
             <div className={styles.modalInstructions}>
               <strong>Important Next Step:</strong>
               Please ensure you send the prefilled WhatsApp message. Your order is pending verification and is only marked as paid once payment is confirmed directly by the seller.
+              <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '12px', color: '#94a3b8' }}>
+                Support Email: <a href="mailto:Pushinpacks30@gmail.com" style={{ color: '#ffffff', textDecoration: 'none', fontWeight: 600 }}>Pushinpacks30@gmail.com</a>
+                <span style={{ margin: '0 8px' }}>•</span>
+                Telegram: <a href="https://t.me/packmans619_1" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 600 }}>https://t.me/packmans619_1</a>
+              </div>
             </div>
 
             {/* Action buttons */}

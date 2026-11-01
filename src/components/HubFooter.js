@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { IconWhatsApp, IconCashApp, IconVenmo, IconShield } from "./Icons";
+import { IconWhatsApp, IconCashApp, IconVenmo, IconShield, IconTelegram } from "./Icons";
 import styles from "./HubFooter.module.css";
 
 export default function HubFooter() {
@@ -97,8 +97,17 @@ export default function HubFooter() {
               <div className={styles.contactItem}>
                 <div>
                   <div className={styles.contactLabel}>Official Operations Email</div>
-                  <a href="mailto:ops@pushinpacks619.internal" className={styles.contactValue}>
-                    ops@pushinpacks619.internal
+                  <a href="mailto:Pushinpacks30@gmail.com" className={styles.contactValue}>
+                    Pushinpacks30@gmail.com
+                  </a>
+                </div>
+              </div>
+
+              <div className={styles.contactItem}>
+                <div>
+                  <div className={styles.contactLabel}>Official Telegram Contact</div>
+                  <a href="https://t.me/packmans619_1" target="_blank" rel="noopener noreferrer" className={styles.contactValue}>
+                    https://t.me/packmans619_1
                   </a>
                 </div>
               </div>
@@ -124,6 +133,16 @@ export default function HubFooter() {
               <div>
                 <div className={styles.contactLabel} style={{ marginBottom: "6px" }}>Verified Accounts &amp; Desk</div>
                 <div className={styles.verifiedAccounts}>
+                  <a
+                    href="https://t.me/packmans619_1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.accountPill}
+                    aria-label="Verified Telegram Desk"
+                  >
+                    <IconTelegram size={14} />
+                    <span>Telegram @packmans619_1</span>
+                  </a>
                   <a
                     href="https://wa.me/16195550199"
                     target="_blank"
