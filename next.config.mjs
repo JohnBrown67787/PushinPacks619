@@ -1,13 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Production optimizations
-  swcMinify: true,
-  compress: true,
   productionBrowserSourceMaps: false,
-
-  // Component caching & prefetching
-  cacheComponents: true,
-  partialPrefetching: true,
 
   // Image optimization - CRITICAL for performance
   images: {
