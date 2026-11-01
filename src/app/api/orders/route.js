@@ -42,7 +42,7 @@ export async function POST(request) {
       });
     }
 
-    const { customer, items, paymentMethod, notes, currency } = body;
+    const { customer, items, paymentMethod, notes, currency, checkoutChannel } = body;
 
     // Validate request structure
     if (!customer) {
@@ -72,7 +72,8 @@ export async function POST(request) {
       items,
       paymentMethod,
       notes,
-      currency
+      currency,
+      checkoutChannel
     });
 
     if (!result.success) {

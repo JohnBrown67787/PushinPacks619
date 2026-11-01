@@ -392,6 +392,8 @@ export async function createOrder(payload) {
     currency,
     selectedPaymentMethod: paymentMethod,
     paymentMethod,
+    checkoutChannel: payload.checkoutChannel || "whatsapp",
+    telegramUrl: "https://t.me/packmans619_1",
     paymentStatus: "unpaid",
     orderStatus: "pending",
     customerNotes: customerNotes.trim(),

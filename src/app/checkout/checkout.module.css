@@ -864,6 +864,41 @@
   box-shadow: none;
 }
 
+/* Pay on Telegram button */
+.telegramBtn {
+  width: 100%;
+  background: linear-gradient(135deg, #0088cc 0%, #0099e5 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 16px var(--space-md-lg);
+  font-size: var(--text-base);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm-md);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 18px rgba(0, 136, 204, 0.4);
+}
+
+.telegramBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0099e5 0%, #00aaff 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(0, 136, 204, 0.55);
+}
+
+.telegramBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.telegramBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .checkoutNotice {
   margin-top: 14px;
   font-size: var(--text-xs);
@@ -1030,6 +1065,26 @@
 
 .modalOpenWhatsAppBtn:hover {
   background: var(--color-brand-green-hover);
+}
+
+.modalOpenTelegramBtn {
+  background: linear-gradient(135deg, #0088cc 0%, #0099e5 100%);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 15px;
+  padding: 14px var(--space-md-lg);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 4px 14px rgba(0, 136, 204, 0.35);
+}
+
+.modalOpenTelegramBtn:hover {
+  background: linear-gradient(135deg, #0099e5 0%, #00aaff 100%);
 }
 
 .modalCloseBtn {

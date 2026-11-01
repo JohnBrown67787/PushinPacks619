@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {
   IconWhatsApp,
+  IconTelegram,
   IconPayPal,
   IconVenmo,
   IconZelle,
@@ -70,6 +71,7 @@ export default function CheckoutPage() {
   // Validation & Submission states
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittingChannel, setSubmittingChannel] = useState(null);
   const [submitError, setSubmitError] = useState('');
 
   // Order confirmation modal state
@@ -805,29 +807,51 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* SECTION 7: Prominent Green Pay on WhatsApp Button */}
-              <button
-                type="button"
-                className={styles.whatsAppBtn}
-                onClick={handleCheckoutSubmit}
-                disabled={isSubmitting || cartItems.length === 0}
-                id="btn-whatsapp-checkout"
-              >
-                {isSubmitting ? (
-                  <>
-                    <IconSpinner width={20} height={20} />
-                    <span>Saving Order...</span>
-                  </>
-                ) : (
-                  <>
-                    <IconWhatsApp width={22} height={22} color="#ffffff" />
-                    <span>Pay on WhatsApp</span>
-                  </>
-                )}
-              </button>
+              {/* SECTION 7: Direct Messaging Checkout Buttons (WhatsApp & Telegram) */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <button
+                  type="button"
+                  className={styles.whatsAppBtn}
+                  onClick={() => handleCheckoutSubmit('whatsapp')}
+                  disabled={isSubmitting || cartItems.length === 0}
+                  id="btn-whatsapp-checkout"
+                >
+                  {isSubmitting && submittingChannel === 'whatsapp' ? (
+                    <>
+                      <IconSpinner width={20} height={20} />
+                      <span>Saving Order...</span>
+                    </>
+                  ) : (
+                    <>
+                      <IconWhatsApp width={22} height={22} color="#ffffff" />
+                      <span>Pay on WhatsApp</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  className={styles.telegramBtn}
+                  onClick={() => handleCheckoutSubmit('telegram')}
+                  disabled={isSubmitting || cartItems.length === 0}
+                  id="btn-telegram-checkout"
+                >
+                  {isSubmitting && submittingChannel === 'telegram' ? (
+                    <>
+                      <IconSpinner width={20} height={20} />
+                      <span>Saving Order...</span>
+                    </>
+                  ) : (
+                    <>
+                      <IconTelegram size={22} />
+                      <span>Pay on Telegram</span>
+                    </>
+                  )}
+                </button>
+              </div>
 
               <p className={styles.checkoutNotice}>
-                Your order will be securely registered in our system, generating your verified reference code before opening WhatsApp.
+                Your order will be securely registered in our system, generating your verified reference code before opening WhatsApp or Telegram (<a href="https://t.me/packmans619_1" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 600 }}>@packmans619_1</a>).
               </p>
             </div>
           </div>
@@ -844,7 +868,7 @@ export default function CheckoutPage() {
 
             <h2 className={styles.modalTitle}>Order Registered Successfully</h2>
             <p className={styles.modalSubtitle}>
-              Your order has been recorded in our database. Complete the checkout by sending the prefilled message to our team on WhatsApp.
+              Your order has been recorded in our database. Complete checkout by contacting our team on {completedOrder.channel === 'telegram' ? 'Telegram' : 'WhatsApp'} with your order reference.
             </p>
 
             {/* Order Reference */}
@@ -885,15 +909,55 @@ export default function CheckoutPage() {
 
             {/* Action buttons */}
             <div className={styles.modalActions}>
-              <a
-                href={completedOrder.whatsAppUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.modalOpenWhatsAppBtn}
-              >
-                <IconWhatsApp width={20} height={20} color="#ffffff" />
-                <span>Open WhatsApp Chat Now</span>
-              </a>
+              {completedOrder.channel === 'telegram' ? (
+                <>
+                  <a
+                    href={completedOrder.telegramUrl || "https://t.me/packmans619_1"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.modalOpenTelegramBtn}
+                  >
+                    <IconTelegram size={20} />
+                    <span>Open Telegram Chat Now</span>
+                  </a>
+
+                  {completedOrder.whatsAppUrl && (
+                    <a
+                      href={completedOrder.whatsAppUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.modalOpenWhatsAppBtn}
+                      style={{ background: 'transparent', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#ffffff', boxShadow: 'none' }}
+                    >
+                      <IconWhatsApp width={20} height={20} color="#25D366" />
+                      <span>Or Chat on WhatsApp</span>
+                    </a>
+                  )}
+                </>
+              ) : (
+                <>
+                  <a
+                    href={completedOrder.whatsAppUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.modalOpenWhatsAppBtn}
+                  >
+                    <IconWhatsApp width={20} height={20} color="#ffffff" />
+                    <span>Open WhatsApp Chat Now</span>
+                  </a>
+
+                  <a
+                    href={completedOrder.telegramUrl || "https://t.me/packmans619_1"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.modalOpenTelegramBtn}
+                    style={{ background: 'transparent', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#ffffff', boxShadow: 'none' }}
+                  >
+                    <IconTelegram size={20} />
+                    <span>Or Chat on Telegram</span>
+                  </a>
+                </>
+              )}
 
               <button
                 type="button"
