@@ -1,0 +1,508 @@
+/* ============================================
+   UNIVERSAL FLUID & AUTO-RESPONSIVE DESIGN
+   Fully adaptive to any screen size
+   ============================================ */
+
+:root {
+  /* Fluid Typography Scale using clamp() */
+  /* Format: clamp(min, preferred, max) */
+  --text-fluid-2xs: clamp(9px, 1.5vw, 11px);
+  --text-fluid-xs: clamp(11px, 1.75vw, 12px);
+  --text-fluid-sm: clamp(12px, 2vw, 13px);
+  --text-fluid-md: clamp(13px, 2.25vw, 14px);
+  --text-fluid-base: clamp(14px, 2.5vw, 16px);
+  --text-fluid-lg: clamp(16px, 3vw, 18px);
+  --text-fluid-xl: clamp(18px, 3.5vw, 20px);
+  --text-fluid-2xl: clamp(20px, 4vw, 24px);
+  --text-fluid-3xl: clamp(24px, 5vw, 28px);
+  --text-fluid-4xl: clamp(28px, 6vw, 32px);
+
+  /* Fluid Spacing Scale */
+  --space-fluid-xs: clamp(4px, 0.5vw, 6px);
+  --space-fluid-sm: clamp(6px, 1vw, 12px);
+  --space-fluid-sm-md: clamp(10px, 1.5vw, 16px);
+  --space-fluid-md: clamp(12px, 2vw, 20px);
+  --space-fluid-md-lg: clamp(16px, 2.5vw, 24px);
+  --space-fluid-lg: clamp(20px, 3vw, 32px);
+  --space-fluid-xl: clamp(24px, 4vw, 40px);
+  --space-fluid-2xl: clamp(32px, 5vw, 56px);
+  --space-fluid-3xl: clamp(48px, 7vw, 80px);
+  --space-fluid-4xl: clamp(64px, 10vw, 120px);
+
+  /* Fluid Container Width */
+  --container-fluid-max: min(100% - 2rem, 1200px);
+  --container-fluid-padding: clamp(1rem, 5vw, 3rem);
+
+  /* Fluid Border Radius */
+  --radius-fluid-sm: clamp(4px, 0.5vw, 8px);
+  --radius-fluid-md: clamp(6px, 0.75vw, 10px);
+  --radius-fluid-lg: clamp(8px, 1vw, 12px);
+
+  /* Fluid Gap for Grids */
+  --gap-fluid-sm: clamp(8px, 1.5vw, 12px);
+  --gap-fluid-md: clamp(12px, 2vw, 20px);
+  --gap-fluid-lg: clamp(16px, 3vw, 32px);
+
+  /* Responsive Line Height */
+  --line-height-fluid-tight: clamp(1.2, 1.3, 1.4);
+  --line-height-fluid-normal: clamp(1.4, 1.5, 1.6);
+  --line-height-fluid-relaxed: clamp(1.6, 1.7, 1.8);
+}
+
+/* ============================================
+   UNIVERSAL BOX SIZING
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-fluid-base);
+  line-height: var(--line-height-fluid-normal);
+  font-family: var(--font-body);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+}
+
+/* ============================================
+   FLUID CONTAINER
+   Auto-responsive, no fixed breakpoints
+   ============================================ */
+
+.container,
+.container-sm,
+.container-md,
+.container-lg {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--container-fluid-padding);
+  padding-right: var(--container-fluid-padding);
+}
+
+.container {
+  max-width: min(100% - 2rem, 1200px);
+}
+
+.container-sm {
+  max-width: min(100% - 2rem, 600px);
+}
+
+.container-md {
+  max-width: min(100% - 2rem, 800px);
+}
+
+.container-lg {
+  max-width: min(100% - 2rem, 1400px);
+}
+
+/* ============================================
+   FLUID TYPOGRAPHY
+   Responsive text without fixed breakpoints
+   ============================================ */
+
+h1 {
+  font-size: var(--text-fluid-4xl);
+  font-weight: 700;
+  line-height: var(--line-height-fluid-tight);
+  margin: var(--space-fluid-lg) 0 var(--space-fluid-md) 0;
+}
+
+h2 {
+  font-size: var(--text-fluid-3xl);
+  font-weight: 700;
+  line-height: var(--line-height-fluid-tight);
+  margin: var(--space-fluid-md-lg) 0 var(--space-fluid-md) 0;
+}
+
+h3 {
+  font-size: var(--text-fluid-2xl);
+  font-weight: 600;
+  line-height: var(--line-height-fluid-tight);
+  margin: var(--space-fluid-md) 0 var(--space-fluid-sm-md) 0;
+}
+
+h4 {
+  font-size: var(--text-fluid-xl);
+  font-weight: 600;
+  line-height: var(--line-height-fluid-normal);
+  margin: var(--space-fluid-sm-md) 0 var(--space-fluid-sm) 0;
+}
+
+h5 {
+  font-size: var(--text-fluid-lg);
+  font-weight: 600;
+  line-height: var(--line-height-fluid-normal);
+  margin: var(--space-fluid-sm) 0 var(--space-fluid-xs) 0;
+}
+
+h6 {
+  font-size: var(--text-fluid-base);
+  font-weight: 600;
+  line-height: var(--line-height-fluid-normal);
+  margin: var(--space-fluid-sm) 0 var(--space-fluid-xs) 0;
+}
+
+p {
+  margin: 0 0 var(--space-fluid-md) 0;
+}
+
+small {
+  font-size: var(--text-fluid-sm);
+}
+
+/* ============================================
+   FLUID GRID SYSTEM
+   Auto-responsive columns without breakpoints
+   ============================================ */
+
+.grid {
+  display: grid;
+  gap: var(--gap-fluid-md);
+  width: 100%;
+}
+
+/* Auto-fit columns (fills available space) */
+.grid-auto {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+/* Auto-fill columns (maintains gaps) */
+.grid-fill {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+}
+
+/* Specific column counts that adapt */
+.grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc((100% - var(--gap-fluid-md)) / 2)), 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc((100% - var(--gap-fluid-md) * 2) / 3)), 1fr));
+}
+
+.grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+}
+
+/* ============================================
+   FLUID FLEXBOX
+   ============================================ */
+
+.flex {
+  display: flex;
+  gap: var(--gap-fluid-md);
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ============================================
+   FLUID IMAGES
+   Auto-responsive without distortion
+   ============================================ */
+
+img,
+picture,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Image aspect ratio containers */
+.aspect-video {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+.aspect-portrait {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+
+/* ============================================
+   FLUID BUTTONS & FORMS
+   ============================================ */
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  padding: var(--space-fluid-sm-md) var(--space-fluid-md);
+  border-radius: var(--radius-fluid-md);
+  border: 1px solid var(--color-border-default);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+button {
+  cursor: pointer;
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
+  font-weight: 600;
+  transition: all var(--duration-fast) var(--ease-smooth);
+}
+
+input,
+textarea {
+  width: 100%;
+}
+
+textarea {
+  resize: vertical;
+  min-height: clamp(100px, 20vh, 300px);
+}
+
+/* ============================================
+   FLUID CARDS
+   ============================================ */
+
+.card {
+  padding: var(--space-fluid-md);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-fluid-lg);
+  transition: all var(--duration-normal) var(--ease-smooth);
+}
+
+.card:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* ============================================
+   FLUID SECTIONS & BLOCKS
+   ============================================ */
+
+section {
+  padding: var(--space-fluid-3xl) var(--container-fluid-padding);
+  width: 100%;
+}
+
+.section-sm {
+  padding: var(--space-fluid-lg) var(--container-fluid-padding);
+}
+
+.section-md {
+  padding: var(--space-fluid-2xl) var(--container-fluid-padding);
+}
+
+.section-lg {
+  padding: var(--space-fluid-3xl) var(--container-fluid-padding);
+}
+
+.section-xl {
+  padding: var(--space-fluid-4xl) var(--container-fluid-padding);
+}
+
+/* ============================================
+   FLUID NAVIGATION
+   ============================================ */
+
+nav {
+  padding: var(--space-fluid-md) var(--container-fluid-padding);
+}
+
+nav ul,
+nav ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-fluid-md);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav a {
+  padding: var(--space-fluid-sm) var(--space-fluid-md);
+  display: inline-block;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  transition: color var(--duration-fast) var(--ease-smooth);
+}
+
+nav a:hover {
+  color: var(--color-brand-green);
+}
+
+/* ============================================
+   CONTAINER QUERIES
+   Responsive components without media queries
+   ============================================ */
+
+@supports (container-type: inline-size) {
+  .container-responsive {
+    container-type: inline-size;
+  }
+
+  @container (min-width: 0px) {
+    .container-responsive .text {
+      font-size: var(--text-fluid-sm);
+    }
+  }
+
+  @container (min-width: 300px) {
+    .container-responsive .text {
+      font-size: var(--text-fluid-base);
+    }
+  }
+
+  @container (min-width: 600px) {
+    .container-responsive .text {
+      font-size: var(--text-fluid-lg);
+    }
+  }
+
+  @container (min-width: 900px) {
+    .container-responsive .text {
+      font-size: var(--text-fluid-xl);
+    }
+  }
+}
+
+/* ============================================
+   MINIMUM TOUCH TARGETS
+   Ensure touch-friendly sizes
+   ============================================ */
+
+button,
+a,
+input[type="checkbox"],
+input[type="radio"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ============================================
+   SMOOTH SCROLLING & TRANSITIONS
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  scroll-padding-top: var(--space-fluid-2xl);
+}
+
+/* ============================================
+   OVERFLOW & SPACING
+   Prevent horizontal scroll
+   ============================================ */
+
+body {
+  overflow-x: hidden;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  nav,
+  .no-print {
+    display: none;
+  }
+}
+
+/* ============================================
+   FALLBACK FOR NON-SUPPORTING BROWSERS
+   ============================================ */
+
+@supports not (width: clamp(1px, 1%, 2px)) {
+  :root {
+    --text-fluid-base: 16px;
+    --text-fluid-lg: 18px;
+    --text-fluid-xl: 20px;
+    --text-fluid-2xl: 24px;
+    --text-fluid-3xl: 28px;
+    --space-fluid-md: 16px;
+    --space-fluid-lg: 24px;
+    --space-fluid-2xl: 48px;
+  }
+}
