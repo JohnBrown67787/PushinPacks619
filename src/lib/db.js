@@ -5,6 +5,101 @@ import { CATALOGS } from "../data/catalogs";
 const DATA_DIR = path.join(process.cwd(), "src", "data");
 const ORDERS_FILE = path.join(DATA_DIR, "orders.json");
 const CONFIG_FILE = path.join(DATA_DIR, "config.json");
+const INQUIRIES_FILE = path.join(DATA_DIR, "inquiries.json");
+
+// Sample demonstration inquiries (only populated when explicitly initialized from admin UI)
+export const SAMPLE_INQUIRIES = [
+  {
+    id: "INQ-9481",
+    portal: "peptides",
+    portalName: "Peptides",
+    client: "Dr. Marcus Vance",
+    email: "vance.biolab@proton.me",
+    items: [
+      { name: "GHK-Cu Copper Peptide (50mg * 10 vials)", qty: 2, price: "$24.00" },
+      { name: "SLU-PP-332 Metabolic (10mg * 10 vials)", qty: 1, price: "$110.00" },
+    ],
+    totalValue: "$158.00",
+    status: "New",
+    date: "2026-10-23 14:15",
+    notes: "Requires cold insulated thermal pack dispatch with COA certificate.",
+  },
+  {
+    id: "INQ-9480",
+    portal: "budcart",
+    portalName: "Bud'Cart",
+    client: "Apex Vending Group",
+    email: "orders@apexvapes.co",
+    items: [
+      { name: "Aura 510 Ceramic Cartridge (1.0ml)", qty: 25, price: "$45.00" },
+      { name: "Stealth Disposable 2.0g", qty: 10, price: "$65.00" },
+    ],
+    totalValue: "$1,775.00",
+    status: "Quoted",
+    date: "2026-10-23 11:42",
+    notes: "Wholesale inquiry for live terpene cartridge stock. Custom invoice sent.",
+  },
+  {
+    id: "INQ-9479",
+    portal: "stocks",
+    portalName: "Stocks",
+    client: "Kestrel Quant Capital",
+    email: "trading@kestrelalpha.io",
+    items: [
+      { name: "Dark Pool Block Feed License", qty: 1, price: "$499/mo" },
+      { name: "HFT Alpha V7 Strategy Terminal", qty: 1, price: "$5,310.25" },
+    ],
+    totalValue: "$5,809.25",
+    status: "Fulfilled",
+    date: "2026-10-22 18:30",
+    notes: "API WebSocket credentials dispatched through encrypted PGP channel.",
+  },
+  {
+    id: "INQ-9478",
+    portal: "glock",
+    portalName: "Glock",
+    client: "Precision Arms Club",
+    email: "armorer@pacprecision.net",
+    items: [
+      { name: "G19 Gen 5 RMR Cut Slide", qty: 3, price: "$340.00" },
+      { name: "Fluted 9mm Match Barrel", qty: 3, price: "$185.00" },
+    ],
+    totalValue: "$1,575.00",
+    status: "Reviewing",
+    date: "2026-10-22 14:05",
+    notes: "Customer requesting verification of RMR optic screw length compatibility.",
+  },
+  {
+    id: "INQ-9477",
+    portal: "pharms",
+    portalName: "Pharms",
+    client: "Sovereign Health Labs",
+    email: "procurement@sovlabs.com",
+    items: [
+      { name: "Luminex Complex Softgels", qty: 6, price: "$85.00" },
+      { name: "Sterile Osmolyte Solution", qty: 4, price: "$60.00" },
+    ],
+    totalValue: "$750.00",
+    status: "New",
+    date: "2026-10-21 21:18",
+    notes: "Needs batch lot testing documentation and USP sterility stamps.",
+  },
+  {
+    id: "INQ-9476",
+    portal: "psychedelics",
+    portalName: "Psychedelics",
+    client: "Elena Rostova",
+    email: "elena.r@neurobotanica.org",
+    items: [
+      { name: "Lunar Harmony 30ml Tincture", qty: 3, price: "$75.00" },
+      { name: "Golden Teacher Micro Stack", qty: 2, price: "$95.00" },
+    ],
+    totalValue: "$415.00",
+    status: "Fulfilled",
+    date: "2026-10-21 16:40",
+    notes: "Discreet vacuum sealed priority dispatch confirmed.",
+  },
+];
 
 // Default Store Configuration
 const DEFAULT_CONFIG = {
@@ -38,55 +133,14 @@ function ensureFiles() {
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(DEFAULT_CONFIG, null, 2), "utf8");
   }
 
+  // Orders start empty by default - populated dynamically via checkout or explicit admin initialization
   if (!fs.existsSync(ORDERS_FILE)) {
-    // Seed with initial order
-    const initialOrders = [
-      {
-        id: "ord_1730000001",
-        orderReference: "PP-2026-9481",
-        customer: {
-          fullName: "Marcus Vance",
-          phone: "+16195551234",
-          email: "vance.biolab@proton.me",
-        },
-        delivery: {
-          method: "delivery",
-          address: "742 Evergreen Terrace",
-          city: "San Diego",
-          notes: "Discreet vacuum packaging requested.",
-        },
-        items: [
-          {
-            productId: "pep-1",
-            name: "GHK-Cu Copper Peptide",
-            spec: "50mg * 10 vials",
-            unitPrice: 24.0,
-            quantity: 2,
-            lineTotal: 48.0,
-            portal: "peptides",
-          },
-          {
-            productId: "pep-9",
-            name: "SLU-PP-332 Metabolic",
-            spec: "10mg * 10 vials",
-            unitPrice: 110.0,
-            quantity: 1,
-            lineTotal: 110.0,
-            portal: "peptides",
-          },
-        ],
-        subtotal: 158.0,
-        deliveryFee: 15.0,
-        discount: 0.0,
-        total: 173.0,
-        currency: "USD",
-        paymentMethod: "zelle",
-        paymentStatus: "Awaiting payment confirmation",
-        orderStatus: "Pending confirmation",
-        createdAt: "2026-10-23T14:15:00.000Z",
-      },
-    ];
-    fs.writeFileSync(ORDERS_FILE, JSON.stringify(initialOrders, null, 2), "utf8");
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify([], null, 2), "utf8");
+  }
+
+  // Inquiries start empty by default - populated dynamically via client submissions or explicit admin initialization
+  if (!fs.existsSync(INQUIRIES_FILE)) {
+    fs.writeFileSync(INQUIRIES_FILE, JSON.stringify([], null, 2), "utf8");
   }
 }
 
@@ -363,4 +417,160 @@ export async function createOrder(payload) {
     order: newOrder,
     whatsAppUrl,
   };
+}
+
+// ============================================
+// INQUIRIES MANAGEMENT
+// ============================================
+
+export function getAllInquiries() {
+  ensureFiles();
+  try {
+    const raw = fs.readFileSync(INQUIRIES_FILE, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+export function createInquiry(payload) {
+  ensureFiles();
+  const inquiries = getAllInquiries();
+  const id = `INQ-${Math.floor(1000 + Math.random() * 9000)}`;
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+  const portalKey = payload.portal || payload.portalKey || "peptides";
+  const portalName = CATALOGS[portalKey]?.name || portalKey;
+
+  const newInq = {
+    id,
+    portal: portalKey,
+    portalName,
+    client: payload.client || payload.name || "Client Direct",
+    email: payload.email || "direct@client.internal",
+    items: payload.items || [
+      { name: payload.itemName || "Custom Catalog Inquired Item", qty: payload.qty || 1, price: payload.price || "$100.00" },
+    ],
+    totalValue: payload.totalValue || payload.price || "$100.00",
+    status: payload.status || "New",
+    date: dateStr,
+    notes: payload.notes || "",
+  };
+
+  inquiries.unshift(newInq);
+  fs.writeFileSync(INQUIRIES_FILE, JSON.stringify(inquiries, null, 2), "utf8");
+  return newInq;
+}
+
+export function updateInquiryStatus(id, status) {
+  ensureFiles();
+  const inquiries = getAllInquiries();
+  const idx = inquiries.findIndex((i) => i.id === id);
+  if (idx === -1) return null;
+  inquiries[idx].status = status;
+  fs.writeFileSync(INQUIRIES_FILE, JSON.stringify(inquiries, null, 2), "utf8");
+  return inquiries[idx];
+}
+
+export function deleteInquiry(id) {
+  ensureFiles();
+  let inquiries = getAllInquiries();
+  inquiries = inquiries.filter((i) => i.id !== id);
+  fs.writeFileSync(INQUIRIES_FILE, JSON.stringify(inquiries, null, 2), "utf8");
+  return true;
+}
+
+export function clearAllInquiries() {
+  ensureFiles();
+  fs.writeFileSync(INQUIRIES_FILE, JSON.stringify([], null, 2), "utf8");
+  return [];
+}
+
+export function seedSampleInquiries() {
+  ensureFiles();
+  fs.writeFileSync(INQUIRIES_FILE, JSON.stringify(SAMPLE_INQUIRIES, null, 2), "utf8");
+  return SAMPLE_INQUIRIES;
+}
+
+// ============================================
+// ORDER DYNAMIC CONTROLS (ADMIN INITIALIZE / CLEAR)
+// ============================================
+
+export function clearAllOrders() {
+  ensureFiles();
+  fs.writeFileSync(ORDERS_FILE, JSON.stringify([], null, 2), "utf8");
+  return [];
+}
+
+export function seedSampleOrder() {
+  ensureFiles();
+  const sample = {
+    id: `ord_${Date.now()}`,
+    orderReference: generateOrderReference(),
+    customer: {
+      fullName: "Dr. Alexander Vance",
+      phone: "+1 (619) 555-0199",
+      email: "vance.biolab@proton.me",
+      address: "124 Concord Ave, Suite 4B",
+      city: "San Diego, CA",
+    },
+    deliveryMethod: "delivery",
+    delivery: {
+      method: "delivery",
+      address: "124 Concord Ave, Suite 4B",
+      city: "San Diego, CA",
+      notes: "Priority cold insulated dispatch requested",
+    },
+    items: [
+      {
+        productId: "pep-1",
+        productNameSnapshot: "GHK-Cu Copper Peptide",
+        name: "GHK-Cu Copper Peptide",
+        spec: "50mg * 10 vials",
+        unitPriceSnapshot: 24.0,
+        unitPrice: 24.0,
+        quantity: 2,
+        lineTotal: 48.0,
+        portal: "peptides",
+      },
+      {
+        productId: "bud-1",
+        productNameSnapshot: "Aura 510 Ceramic Cartridge",
+        name: "Aura 510 Ceramic Cartridge",
+        spec: "1.0ml Live Resin",
+        unitPriceSnapshot: 45.0,
+        unitPrice: 45.0,
+        quantity: 1,
+        lineTotal: 45.0,
+        portal: "budcart",
+      },
+    ],
+    orderSubtotal: 93.0,
+    subtotal: 93.0,
+    deliveryFee: 15.0,
+    discount: 0.0,
+    finalTotal: 108.0,
+    total: 108.0,
+    currency: "USD",
+    selectedPaymentMethod: "bitcoin",
+    paymentMethod: "bitcoin",
+    paymentStatus: "paid",
+    orderStatus: "confirmed",
+    customerNotes: "Priority cold insulated dispatch requested",
+    createdAt: new Date().toISOString(),
+  };
+
+  const config = getStoreConfig();
+  const { text: whatsappMessage, waUrl: whatsAppUrl } = buildWhatsAppOrderMessage({
+    order: sample,
+    config,
+  });
+  sample.whatsappMessage = whatsappMessage;
+  sample.whatsappUrl = whatsAppUrl;
+
+  const orders = getAllOrders();
+  orders.unshift(sample);
+  fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2), "utf8");
+  return sample;
 }

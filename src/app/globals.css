@@ -468,6 +468,17 @@ img, video, canvas, svg {
   .desktopOnly {
     display: none !important;
   }
+
+  .section {
+    padding: 0 var(--space-sm-md);
+  }
+
+  .btn-primary,
+  .btn-ghost {
+    width: 100%;
+    padding: var(--space-sm-md) 16px;
+    font-size: var(--text-sm);
+  }
 }
 
 @media (max-width: 768px) {

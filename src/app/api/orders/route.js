@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllOrders, createOrder } from '@/lib/db';
+import { getAllOrders, createOrder, clearAllOrders, seedSampleOrder } from '@/lib/db';
 
 export async function GET(request) {
   try {
@@ -21,6 +21,27 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json();
+
+    // Support administrative action: initialize sample order
+    if (body.action === 'initialize') {
+      const sample = seedSampleOrder();
+      return NextResponse.json({
+        success: true,
+        message: 'Sample order initialized successfully',
+        order: sample,
+      }, { status: 201 });
+    }
+
+    // Support administrative action: clear all orders
+    if (body.action === 'clear') {
+      const cleared = clearAllOrders();
+      return NextResponse.json({
+        success: true,
+        message: 'All orders cleared successfully',
+        orders: cleared,
+      });
+    }
+
     const { customer, items, paymentMethod, notes, currency } = body;
 
     // Validate request structure
@@ -71,6 +92,24 @@ export async function POST(request) {
     console.error('Order creation error:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Internal server error while processing order' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE() {
+  try {
+    const cleared = clearAllOrders();
+    return NextResponse.json({
+      success: true,
+      message: 'All orders cleared successfully',
+      count: 0,
+      orders: cleared,
+    });
+  } catch (error) {
+    console.error('Error clearing orders:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to clear orders' },
       { status: 500 }
     );
   }

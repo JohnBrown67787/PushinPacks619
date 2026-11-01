@@ -25,6 +25,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .headerContainer {
+    padding: 14px 16px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerContainer {
+    padding: 12px 12px;
+  }
 }
 
 .brandLink {
@@ -154,6 +168,21 @@
   }
 }
 
+@media (max-width: 640px) {
+  .container {
+    padding: 0 16px;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+    gap: 16px;
+    margin: 16px auto 0 auto;
+  }
+}
+
 /* Left Column: Form Sections */
 .formColumn {
   display: flex;
@@ -168,6 +197,19 @@
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 640px) {
+  .sectionCard {
+    padding: 18px;
+    border-radius: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sectionCard {
+    padding: 16px;
+  }
 }
 
 .sectionHeader {

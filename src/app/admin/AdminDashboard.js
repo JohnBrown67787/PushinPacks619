@@ -34,123 +34,47 @@ import {
   IconZelle,
 } from "../../components/Icons";
 
-const INITIAL_INQUIRIES = [
-  {
-    id: "INQ-9481",
-    portal: "peptides",
-    portalName: "Peptides",
-    client: "Dr. Marcus Vance",
-    email: "vance.biolab@proton.me",
-    items: [
-      { name: "GHK-Cu Copper Peptide (50mg * 10 vials)", qty: 2, price: "$24.00" },
-      { name: "SLU-PP-332 Metabolic (10mg * 10 vials)", qty: 1, price: "$110.00" },
-    ],
-    totalValue: "$158.00",
-    status: "New",
-    date: "2026-10-23 14:15",
-    notes: "Requires cold insulated thermal pack dispatch with COA certificate.",
-  },
-  {
-    id: "INQ-9480",
-    portal: "budcart",
-    portalName: "Bud'Cart",
-    client: "Apex Vending Group",
-    email: "orders@apexvapes.co",
-    items: [
-      { name: "Aura 510 Ceramic Cartridge (1.0ml)", qty: 25, price: "$45.00" },
-      { name: "Stealth Disposable 2.0g", qty: 10, price: "$65.00" },
-    ],
-    totalValue: "$1,775.00",
-    status: "Quoted",
-    date: "2026-10-23 11:42",
-    notes: "Wholesale inquiry for live terpene cartridge stock. Custom invoice sent.",
-  },
-  {
-    id: "INQ-9479",
-    portal: "stocks",
-    portalName: "Stocks",
-    client: "Kestrel Quant Capital",
-    email: "trading@kestrelalpha.io",
-    items: [
-      { name: "Dark Pool Block Feed License", qty: 1, price: "$499/mo" },
-      { name: "HFT Alpha V7 Strategy Terminal", qty: 1, price: "$5,310.25" },
-    ],
-    totalValue: "$5,809.25",
-    status: "Fulfilled",
-    date: "2026-10-22 18:30",
-    notes: "API WebSocket credentials dispatched through encrypted PGP channel.",
-  },
-  {
-    id: "INQ-9478",
-    portal: "glock",
-    portalName: "Glock",
-    client: "Precision Arms Club",
-    email: "armorer@pacprecision.net",
-    items: [
-      { name: "G19 Gen 5 RMR Cut Slide", qty: 3, price: "$340.00" },
-      { name: "Fluted 9mm Match Barrel", qty: 3, price: "$185.00" },
-    ],
-    totalValue: "$1,575.00",
-    status: "Reviewing",
-    date: "2026-10-22 14:05",
-    notes: "Customer requesting verification of RMR optic screw length compatibility.",
-  },
-  {
-    id: "INQ-9477",
-    portal: "pharms",
-    portalName: "Pharms",
-    client: "Sovereign Health Labs",
-    email: "procurement@sovlabs.com",
-    items: [
-      { name: "Luminex Complex Softgels", qty: 6, price: "$85.00" },
-      { name: "Sterile Osmolyte Solution", qty: 4, price: "$60.00" },
-    ],
-    totalValue: "$750.00",
-    status: "New",
-    date: "2026-10-21 21:18",
-    notes: "Needs batch lot testing documentation and USP sterility stamps.",
-  },
-  {
-    id: "INQ-9476",
-    portal: "psychedelics",
-    portalName: "Psychedelics",
-    client: "Elena Rostova",
-    email: "elena.r@neurobotanica.org",
-    items: [
-      { name: "Lunar Harmony 30ml Tincture", qty: 3, price: "$75.00" },
-      { name: "Golden Teacher Micro Stack", qty: 2, price: "$95.00" },
-    ],
-    totalValue: "$415.00",
-    status: "Fulfilled",
-    date: "2026-10-21 16:40",
-    notes: "Discreet vacuum sealed priority dispatch confirmed.",
-  },
-];
-
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedPortal, setSelectedPortal] = useState("all");
-  const [inquiries, setInquiries] = useState(INITIAL_INQUIRIES);
+
+  // Dynamic Inquiries State (loaded from /api/inquiries, starts empty until initialized)
+  const [inquiries, setInquiries] = useState([]);
+  const [isLoadingInquiries, setIsLoadingInquiries] = useState(true);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  // WhatsApp Orders state (loaded from backend DB)
+
+  // Dynamic WhatsApp Orders State (loaded from /api/orders, starts empty until initialized)
   const [liveOrders, setLiveOrders] = useState([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [orderSearchQuery, setOrderSearchQuery] = useState("");
   const [orderStatusFilter, setOrderStatusFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState(null);
+
+  // Store Configuration State
   const [storeConfig, setStoreConfig] = useState(null);
   const [isSavingConfig, setIsSavingConfig] = useState(false);
 
-  // Fetch real orders and store configuration from backend
+  // Toast Notification
+  const [notification, setNotification] = useState("");
+  const triggerToast = (msg) => {
+    setNotification(msg);
+    setTimeout(() => setNotification(""), 3000);
+  };
+
+  // Fetch real data from backend APIs
   const refreshAdminData = async () => {
     try {
-      const [ordersRes, configRes] = await Promise.all([
+      const [ordersRes, configRes, inquiriesRes] = await Promise.all([
         fetch("/api/orders"),
         fetch("/api/config"),
+        fetch("/api/inquiries"),
       ]);
+
       const ordersData = await ordersRes.json();
       const configData = await configRes.json();
+      const inquiriesData = await inquiriesRes.json();
 
       if (ordersData.success && ordersData.orders) {
         setLiveOrders(ordersData.orders);
@@ -158,8 +82,14 @@ export default function AdminDashboard() {
       if (configData.success && configData.config) {
         setStoreConfig(configData.config);
       }
+      if (inquiriesData.success && inquiriesData.inquiries) {
+        setInquiries(inquiriesData.inquiries);
+      }
     } catch (err) {
-      console.error("Failed to load admin orders/config:", err);
+      console.error("Failed to load admin data:", err);
+    } finally {
+      setIsLoadingInquiries(false);
+      setIsLoadingOrders(false);
     }
   };
 
@@ -167,6 +97,195 @@ export default function AdminDashboard() {
     refreshAdminData();
   }, []);
 
+  // ----------------------------------------------------
+  // DYNAMIC INITIALIZATION & CLEARING HANDLERS
+  // ----------------------------------------------------
+
+  // Master Initialize: seeds both sample inquiries and sample order from the page
+  const handleInitializeData = async () => {
+    try {
+      const [inqRes, ordRes] = await Promise.all([
+        fetch("/api/inquiries", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "initialize" }),
+        }),
+        fetch("/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "initialize" }),
+        }),
+      ]);
+
+      const inqData = await inqRes.json();
+      const ordData = await ordRes.json();
+
+      if (inqData.success && inqData.inquiries) {
+        setInquiries(inqData.inquiries);
+      }
+      if (ordData.success && ordData.order) {
+        setLiveOrders((prev) => [ordData.order, ...prev.filter((o) => o.id !== ordData.order.id)]);
+      }
+
+      triggerToast("Demonstration inquiries & order initialized successfully!");
+    } catch (err) {
+      console.error("Initialization error:", err);
+      triggerToast("Failed to initialize demonstration data");
+    }
+  };
+
+  // Master Clear: wipes all inquiries and orders back to 0
+  const handleClearAllData = async () => {
+    if (!window.confirm("Are you sure you want to clear all inquiries and orders? Data will be reset to empty.")) {
+      return;
+    }
+    try {
+      await Promise.all([
+        fetch("/api/inquiries", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "clear" }),
+        }),
+        fetch("/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "clear" }),
+        }),
+      ]);
+
+      setInquiries([]);
+      setLiveOrders([]);
+      setSelectedInquiry(null);
+      setSelectedOrder(null);
+      triggerToast("All admin records cleared back to zero.");
+    } catch (err) {
+      console.error("Clear error:", err);
+      triggerToast("Failed to clear admin records");
+    }
+  };
+
+  // Initialize Inquiries only
+  const handleInitializeInquiriesOnly = async () => {
+    try {
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "initialize" }),
+      });
+      const data = await res.json();
+      if (data.success && data.inquiries) {
+        setInquiries(data.inquiries);
+        triggerToast("Sample inquiries initialized!");
+      }
+    } catch (err) {
+      console.error("Error initializing inquiries:", err);
+      triggerToast("Failed to initialize inquiries");
+    }
+  };
+
+  // Clear Inquiries only
+  const handleClearInquiriesOnly = async () => {
+    try {
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "clear" }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setInquiries([]);
+        setSelectedInquiry(null);
+        triggerToast("Inquiries list cleared.");
+      }
+    } catch (err) {
+      console.error("Error clearing inquiries:", err);
+      triggerToast("Failed to clear inquiries");
+    }
+  };
+
+  // Initialize Sample Order only
+  const handleInitializeOrdersOnly = async () => {
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "initialize" }),
+      });
+      const data = await res.json();
+      if (data.success && data.order) {
+        setLiveOrders((prev) => [data.order, ...prev.filter((o) => o.id !== data.order.id)]);
+        triggerToast("Sample order initialized!");
+      }
+    } catch (err) {
+      console.error("Error initializing order:", err);
+      triggerToast("Failed to initialize order");
+    }
+  };
+
+  // Clear Orders only
+  const handleClearOrdersOnly = async () => {
+    if (!window.confirm("Are you sure you want to clear all WhatsApp orders?")) return;
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "clear" }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setLiveOrders([]);
+        setSelectedOrder(null);
+        triggerToast("WhatsApp orders cleared.");
+      }
+    } catch (err) {
+      console.error("Error clearing orders:", err);
+      triggerToast("Failed to clear orders");
+    }
+  };
+
+  // Update Inquiry Status (persisted to backend)
+  const handleUpdateInquiryStatus = async (id, newStatus) => {
+    try {
+      const res = await fetch(`/api/inquiries/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const data = await res.json();
+      if (data.success && data.inquiry) {
+        setInquiries((prev) =>
+          prev.map((inq) => (inq.id === id ? data.inquiry : inq))
+        );
+        if (selectedInquiry && selectedInquiry.id === id) {
+          setSelectedInquiry(data.inquiry);
+        }
+        triggerToast(`Inquiry ${id} updated to ${newStatus}`);
+      }
+    } catch (err) {
+      console.error("Error updating inquiry status:", err);
+      triggerToast("Failed to update inquiry status");
+    }
+  };
+
+  // Delete single inquiry
+  const handleDeleteInquiry = async (id) => {
+    try {
+      const res = await fetch(`/api/inquiries/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) {
+        setInquiries((prev) => prev.filter((inq) => inq.id !== id));
+        if (selectedInquiry && selectedInquiry.id === id) {
+          setSelectedInquiry(null);
+        }
+        triggerToast(`Inquiry ${id} deleted`);
+      }
+    } catch (err) {
+      console.error("Error deleting inquiry:", err);
+      triggerToast("Failed to delete inquiry");
+    }
+  };
+
+  // Update WhatsApp Order Status
   const handleUpdateOrderStatus = async (orderId, newOrderStatus, newPaymentStatus) => {
     try {
       const res = await fetch(`/api/orders/${orderId}`, {
@@ -193,6 +312,7 @@ export default function AdminDashboard() {
     }
   };
 
+  // Save Store Configuration
   const handleSaveStoreConfig = async (e) => {
     if (e) e.preventDefault();
     if (!storeConfig) return;
@@ -205,7 +325,7 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (data.success) {
-        triggerToast("Store configuration and WhatsApp number saved successfully");
+        triggerToast("Store configuration and contact details saved successfully");
       } else {
         triggerToast("Error saving store configuration");
       }
@@ -217,7 +337,10 @@ export default function AdminDashboard() {
     }
   };
 
-  // Portal copy state
+  // ----------------------------------------------------
+  // PORTAL COPY & CATALOGS STATE
+  // ----------------------------------------------------
+
   const [portalsData, setPortalsData] = useState(() => {
     const map = {};
     Object.keys(CATALOGS).forEach((key) => {
@@ -226,7 +349,6 @@ export default function AdminDashboard() {
     return map;
   });
 
-  // Products state (across all portals, explicitly untracked inventory)
   const [allProducts, setAllProducts] = useState(() => {
     const list = [];
     Object.keys(CATALOGS).forEach((portalKey) => {
@@ -238,7 +360,6 @@ export default function AdminDashboard() {
     return list;
   });
 
-  // FAQs state (across all portals)
   const [allFaqs, setAllFaqs] = useState(() => {
     const list = [];
     Object.keys(CATALOGS).forEach((portalKey) => {
@@ -250,7 +371,7 @@ export default function AdminDashboard() {
     return list;
   });
 
-  // Modal controls
+  // Modals state
   const [showNewProductModal, setShowNewProductModal] = useState(false);
   const [newProductData, setNewProductData] = useState({
     portalKey: "peptides",
@@ -270,21 +391,26 @@ export default function AdminDashboard() {
     a: "",
   });
 
-  const [notification, setNotification] = useState("");
-  const triggerToast = (msg) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(""), 2800);
-  };
+  const [showNewInquiryModal, setShowNewInquiryModal] = useState(false);
+  const [newInquiryData, setNewInquiryData] = useState({
+    portalKey: "peptides",
+    client: "",
+    email: "",
+    itemName: "",
+    qty: 1,
+    price: "$150.00",
+    notes: "",
+  });
 
   // Filter inquiries
   const filteredInquiries = inquiries.filter((inq) => {
     const matchesPortal = selectedPortal === "all" || inq.portal === selectedPortal;
     const matchesStatus = statusFilter === "all" || inq.status.toLowerCase() === statusFilter.toLowerCase();
     const matchesSearch =
-      inq.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inq.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inq.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inq.portalName.toLowerCase().includes(searchQuery.toLowerCase());
+      (inq.id && inq.id.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (inq.client && inq.client.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (inq.email && inq.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (inq.portalName && inq.portalName.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesPortal && matchesStatus && matchesSearch;
   });
 
@@ -307,17 +433,7 @@ export default function AdminDashboard() {
     return matchesPortal && matchesSearch;
   });
 
-  // Handlers
-  const handleUpdateInquiryStatus = (id, newStatus) => {
-    setInquiries((prev) =>
-      prev.map((inq) => (inq.id === id ? { ...inq, status: newStatus } : inq))
-    );
-    if (selectedInquiry && selectedInquiry.id === id) {
-      setSelectedInquiry((prev) => ({ ...prev, status: newStatus }));
-    }
-    triggerToast(`Inquiry ${id} status updated to ${newStatus}`);
-  };
-
+  // Product visibility
   const handleToggleProductActive = (id) => {
     setAllProducts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, active: !p.active } : p))
@@ -325,6 +441,7 @@ export default function AdminDashboard() {
     triggerToast("Product visibility toggled");
   };
 
+  // Create Product Offering
   const handleCreateProduct = (e) => {
     e.preventDefault();
     if (!newProductData.name) return;
@@ -350,6 +467,7 @@ export default function AdminDashboard() {
     triggerToast(`Added ${newProd.name} to ${portal.name}`);
   };
 
+  // Create FAQ Article
   const handleCreateFaq = (e) => {
     e.preventDefault();
     if (!newFaqData.q || !newFaqData.a) return;
@@ -371,6 +489,73 @@ export default function AdminDashboard() {
     setAllFaqs((prev) => prev.filter((f) => f.id !== id));
     triggerToast("FAQ deleted");
   };
+
+  // Create custom inquiry from page
+  const handleCreateInquirySubmit = async (e) => {
+    e.preventDefault();
+    if (!newInquiryData.client) return;
+
+    try {
+      const portal = portalsData[newInquiryData.portalKey];
+      const payload = {
+        portal: newInquiryData.portalKey,
+        portalName: portal.name,
+        client: newInquiryData.client,
+        email: newInquiryData.email,
+        items: [
+          {
+            name: newInquiryData.itemName || "General Catalog Inquiry",
+            qty: parseInt(newInquiryData.qty, 10) || 1,
+            price: newInquiryData.price,
+          },
+        ],
+        totalValue: newInquiryData.price,
+        notes: newInquiryData.notes,
+      };
+
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (data.success && data.inquiry) {
+        setInquiries((prev) => [data.inquiry, ...prev]);
+        setShowNewInquiryModal(false);
+        setNewInquiryData({
+          portalKey: "peptides",
+          client: "",
+          email: "",
+          itemName: "",
+          qty: 1,
+          price: "$150.00",
+          notes: "",
+        });
+        triggerToast(`Inquiry created for ${payload.client}`);
+      }
+    } catch (err) {
+      console.error("Error creating inquiry:", err);
+      triggerToast("Failed to create inquiry");
+    }
+  };
+
+  // ----------------------------------------------------
+  // DYNAMIC CALCULATED METRICS
+  // ----------------------------------------------------
+  const totalInquiriesCount = inquiries.length;
+  const newInquiriesCount = inquiries.filter((i) => i.status === "New").length;
+
+  const inquiriesVolumeTotal = inquiries.reduce((sum, inq) => {
+    const numeric = parseFloat(String(inq.totalValue).replace(/[^0-9.]/g, "")) || 0;
+    return sum + numeric;
+  }, 0);
+
+  const ordersVolumeTotal = liveOrders.reduce((sum, ord) => {
+    return sum + (Number(ord.finalTotal ?? ord.total) || 0);
+  }, 0);
+
+  const combinedVolumeTotal = inquiriesVolumeTotal + ordersVolumeTotal;
 
   return (
     <div className={styles.adminPage}>
@@ -415,16 +600,39 @@ export default function AdminDashboard() {
           <div>
             <span className={styles.brandTitle}>PUSHINPACKS619</span>
             <div style={{ fontSize: "var(--text-2xs)", color: "var(--color-text-muted)", letterSpacing: "1px", textTransform: "uppercase" }}>
-              Network Administration Console
+              Dynamic Administration Console
             </div>
           </div>
           <span className={styles.headerBadge}>
-            <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", background: "var(--color-success)" }}></span>
-            <span>6/6 Portals Online</span>
+            <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", background: inquiries.length > 0 || liveOrders.length > 0 ? "var(--color-success)" : "var(--color-text-dim)" }}></span>
+            <span>{inquiries.length > 0 || liveOrders.length > 0 ? `Dynamic Data: ${inquiries.length} Inq / ${liveOrders.length} Orders` : "Clean State (Uninitialized)"}</span>
           </span>
         </div>
 
         <div className={styles.headerRight}>
+          {/* Quick Initialize / Clear Action Buttons in Header */}
+          {inquiries.length === 0 && liveOrders.length === 0 ? (
+            <button
+              onClick={handleInitializeData}
+              className={styles.primaryBtn}
+              style={{ padding: "6px 14px", fontSize: "var(--text-xs)" }}
+              title="Click to populate sample demonstration inquiries and order"
+            >
+              <IconRefresh size={14} color="#050507" />
+              <span>Initialize Data</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleClearAllData}
+              className={styles.secondaryBtn}
+              style={{ padding: "6px 12px", fontSize: "var(--text-xs)", color: "#f87171" }}
+              title="Reset all dynamic inquiries and orders to zero"
+            >
+              <IconTrash size={14} color="currentColor" />
+              <span>Clear Data</span>
+            </button>
+          )}
+
           <Link href="/" target="_blank" className={styles.secondaryBtn}>
             <span>View Public Hub</span>
             <IconArrowRight size={14} color="var(--color-text-muted)" />
@@ -454,6 +662,11 @@ export default function AdminDashboard() {
               >
                 <IconInbox size={16} color="currentColor" />
                 <span>Inquiries Desk</span>
+                {inquiries.length > 0 && (
+                  <span style={{ marginLeft: "auto", fontSize: "var(--text-2xs)", background: "rgba(255, 255, 255, 0.1)", color: "#ffffff", fontWeight: 700, padding: "2px 6px", borderRadius: "4px" }}>
+                    {inquiries.length}
+                  </span>
+                )}
               </button>
               <button
                 onClick={() => setActiveTab("portals")}
@@ -507,9 +720,9 @@ export default function AdminDashboard() {
 
           <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.06)", paddingTop: "16px", paddingLeft: "10px", paddingRight: "10px" }}>
             <div style={{ fontSize: "var(--text-2xs)", color: "var(--color-text-dim)", lineHeight: 1.5 }}>
-              PushinPacks Engine v2.4
+              PushinPacks Dynamic Engine
               <br />
-              WhatsApp Checkout Online.
+              {inquiries.length === 0 && liveOrders.length === 0 ? "Awaiting data initialization" : "Active dynamic data loaded"}
             </div>
           </div>
         </aside>
@@ -556,11 +769,11 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Explicit Notice Banner per user requirements */}
+          {/* Dynamic Notice Banner */}
           <div className={styles.noticeBanner}>
             <IconShield size={20} color="#d4d4d8" />
             <span>
-              <strong>Notice:</strong> Per system configuration, physical inventory counts are untracked. The dashboard manages inquiries, catalog offerings, pricing, descriptions, and portal content.
+              <strong>Dynamic State:</strong> Records are added dynamically as customers submit orders or inquiries. You can initialize demo data or clear all records at any time using the console controls.
             </span>
           </div>
 
@@ -569,38 +782,104 @@ export default function AdminDashboard() {
              ========================================================= */}
           {activeTab === "overview" && (
             <div>
-              {/* Key Metrics */}
+              {/* Key Metrics - 100% Dynamic */}
               <div className={styles.metricsGrid}>
                 <div className={styles.metricCard}>
-                  <div className={styles.metricLabel}>Total Inquiries (30d)</div>
-                  <div className={styles.metricValue}>142</div>
-                  <div className={styles.metricSubtext}>+18% from last month</div>
+                  <div className={styles.metricLabel}>Total Inquiries (Active)</div>
+                  <div className={styles.metricValue}>{totalInquiriesCount}</div>
+                  <div className={styles.metricSubtext}>
+                    {totalInquiriesCount === 0
+                      ? "No inquiries initialized"
+                      : `${newInquiriesCount} pending review`}
+                  </div>
                 </div>
+
                 <div className={styles.metricCard}>
                   <div className={styles.metricLabel}>Quoted Order Volume</div>
-                  <div className={styles.metricValue}>$48,250</div>
-                  <div className={styles.metricSubtext}>Across all 6 portals</div>
+                  <div className={styles.metricValue}>
+                    ${combinedVolumeTotal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
+                  <div className={styles.metricSubtext}>
+                    {combinedVolumeTotal === 0
+                      ? "Awaiting initialization or live orders"
+                      : `From ${totalInquiriesCount} inquiries & ${liveOrders.length} orders`}
+                  </div>
                 </div>
+
                 <div className={styles.metricCard}>
                   <div className={styles.metricLabel}>Live Catalog Offerings</div>
                   <div className={styles.metricValue}>{allProducts.length}</div>
-                  <div className={styles.metricSubtext}>Untracked stock listings</div>
+                  <div className={styles.metricSubtext}>Across all 6 sub-portals</div>
                 </div>
+
                 <div className={styles.metricCard}>
-                  <div className={styles.metricLabel}>Active Sub-Portals</div>
-                  <div className={styles.metricValue}>6 / 6</div>
-                  <div className={styles.metricSubtext}>All endpoints operational</div>
+                  <div className={styles.metricLabel}>WhatsApp Orders</div>
+                  <div className={styles.metricValue}>{liveOrders.length}</div>
+                  <div className={styles.metricSubtext}>
+                    {liveOrders.length === 0
+                      ? "No orders recorded yet"
+                      : `${liveOrders.filter((o) => o.orderStatus === "pending").length} pending coordination`}
+                  </div>
                 </div>
               </div>
+
+              {/* Clean State Banner when data is not yet initialized */}
+              {inquiries.length === 0 && liveOrders.length === 0 && (
+                <div
+                  className={styles.tableCard}
+                  style={{
+                    padding: "36px 24px",
+                    textAlign: "center",
+                    marginBottom: "var(--space-md-lg)",
+                    border: "1px dashed rgba(255, 255, 255, 0.15)",
+                    background: "rgba(255, 255, 255, 0.02)",
+                  }}
+                >
+                  <div style={{ display: "inline-flex", padding: "14px", borderRadius: "50%", background: "rgba(255, 255, 255, 0.05)", marginBottom: "14px" }}>
+                    <IconLayers size={28} color="#ffffff" />
+                  </div>
+                  <h3 style={{ color: "#ffffff", fontSize: "var(--text-lg)", margin: "0 0 8px 0" }}>
+                    Admin Workspace Ready &mdash; Data Not Initialized
+                  </h3>
+                  <p style={{ color: "var(--color-text-muted)", fontSize: "var(--text-sm)", maxWidth: "540px", margin: "0 auto 20px auto", lineHeight: 1.6 }}>
+                    The administration dashboard is in a clean dynamic state. Data will be populated only when clients interact with the store, or when you explicitly initialize demonstration data from this page.
+                  </p>
+                  <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+                    <button onClick={handleInitializeData} className={styles.primaryBtn}>
+                      <IconRefresh size={15} color="#050507" />
+                      <span>Initialize Demonstration Data</span>
+                    </button>
+                    <button onClick={() => setShowNewInquiryModal(true)} className={styles.secondaryBtn}>
+                      <IconPlus size={15} color="currentColor" />
+                      <span>Add Custom Inquiry</span>
+                    </button>
+                    <Link href="/checkout" target="_blank" className={styles.secondaryBtn}>
+                      <IconExternalLink size={15} color="currentColor" />
+                      <span>Simulate Customer Checkout</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
 
               {/* Recent Inquiries Quick Table */}
               <div className={styles.tableCard}>
                 <div className={styles.tableHeader}>
-                  <div className={styles.tableTitle}>Recent Client Inquiries</div>
-                  <button onClick={() => setActiveTab("inquiries")} className={styles.secondaryBtn}>
-                    <span>View All Inquiries</span>
-                    <IconArrowRight size={14} color="var(--color-text-muted)" />
-                  </button>
+                  <div className={styles.tableTitle}>
+                    Recent Client Inquiries {inquiries.length > 0 ? `(${inquiries.length})` : "(0)"}
+                  </div>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    {inquiries.length === 0 ? (
+                      <button onClick={handleInitializeInquiriesOnly} className={styles.secondaryBtn}>
+                        <IconPlus size={14} color="currentColor" />
+                        <span>Initialize Inquiries</span>
+                      </button>
+                    ) : (
+                      <button onClick={() => setActiveTab("inquiries")} className={styles.secondaryBtn}>
+                        <span>View All Inquiries</span>
+                        <IconArrowRight size={14} color="var(--color-text-muted)" />
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <div className={styles.tableWrapper}>
                   <table className={styles.dataTable}>
@@ -616,44 +895,55 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {inquiries.slice(0, 5).map((inq) => (
-                        <tr key={inq.id} style={{ cursor: "pointer" }} onClick={() => setSelectedInquiry(inq)}>
-                          <td style={{ fontWeight: 700, color: "#ffffff" }}>{inq.id}</td>
-                          <td>
-                            <span style={{ padding: "3px 8px", borderRadius: "4px", background: "rgba(255, 255, 255, 0.05)", fontSize: "var(--text-2xs)", fontWeight: 600 }}>
-                              {inq.portalName}
-                            </span>
+                      {inquiries.length === 0 ? (
+                        <tr>
+                          <td colSpan={7} style={{ textAlign: "center", padding: "40px 16px", color: "var(--color-text-muted)" }}>
+                            <div style={{ fontSize: "var(--text-sm)", marginBottom: "8px" }}>No client inquiries recorded.</div>
+                            <div style={{ fontSize: "var(--text-xs)", color: "var(--color-text-dim)" }}>
+                              Click &quot;Initialize Demonstration Data&quot; or use the &quot;Add Custom Inquiry&quot; button to add data.
+                            </div>
                           </td>
-                          <td>
-                            <div style={{ fontWeight: 600, color: "#ffffff" }}>{inq.client}</div>
-                            <div style={{ fontSize: "var(--text-2xs)", color: "var(--color-text-muted)" }}>{inq.email}</div>
-                          </td>
-                          <td>{inq.items.length} items requested</td>
-                          <td style={{ fontWeight: 700, color: "#ffffff" }}>{inq.totalValue}</td>
-                          <td>
-                            <span
-                              className={
-                                inq.status === "New"
-                                  ? styles.statusNew
-                                  : inq.status === "Quoted"
-                                  ? styles.statusQuoted
-                                  : inq.status === "Reviewing"
-                                  ? styles.statusReviewing
-                                  : styles.statusFulfilled
-                              }
-                            >
-                              {inq.status}
-                            </span>
-                          </td>
-                          <td style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>{inq.date}</td>
                         </tr>
-                      ))}
+                      ) : (
+                        inquiries.slice(0, 5).map((inq) => (
+                          <tr key={inq.id} style={{ cursor: "pointer" }} onClick={() => setSelectedInquiry(inq)}>
+                            <td style={{ fontWeight: 700, color: "#ffffff" }}>{inq.id}</td>
+                            <td>
+                              <span style={{ padding: "3px 8px", borderRadius: "4px", background: "rgba(255, 255, 255, 0.05)", fontSize: "var(--text-2xs)", fontWeight: 600 }}>
+                                {inq.portalName}
+                              </span>
+                            </td>
+                            <td>
+                              <div style={{ fontWeight: 600, color: "#ffffff" }}>{inq.client}</div>
+                              <div style={{ fontSize: "var(--text-2xs)", color: "var(--color-text-muted)" }}>{inq.email}</div>
+                            </td>
+                            <td>{inq.items?.length || 1} items requested</td>
+                            <td style={{ fontWeight: 700, color: "#ffffff" }}>{inq.totalValue}</td>
+                            <td>
+                              <span
+                                className={
+                                  inq.status === "New"
+                                    ? styles.statusNew
+                                    : inq.status === "Quoted"
+                                    ? styles.statusQuoted
+                                    : inq.status === "Reviewing"
+                                    ? styles.statusReviewing
+                                    : styles.statusFulfilled
+                                }
+                              >
+                                {inq.status}
+                              </span>
+                            </td>
+                            <td style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>{inq.date}</td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
               </div>
 
-              {/* Portal Health & Engagement */}
+              {/* Portal Health & Direct Actions */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "var(--space-md-lg)" }}>
                 <div className={styles.tableCard}>
                   <div className={styles.tableHeader}>
@@ -688,39 +978,46 @@ export default function AdminDashboard() {
 
                 <div className={styles.tableCard}>
                   <div className={styles.tableHeader}>
-                    <div className={styles.tableTitle}>Direct Admin Actions</div>
+                    <div className={styles.tableTitle}>Dynamic Data Management</div>
                   </div>
                   <div style={{ padding: "var(--space-md-lg) 24px", display: "flex", flexDirection: "column", gap: "var(--space-sm-md)" }}>
+                    <button
+                      onClick={handleInitializeData}
+                      className={styles.primaryBtn}
+                      style={{ width: "100%", justifyContent: "center" }}
+                    >
+                      <IconRefresh size={16} color="#050507" />
+                      <span>Initialize Demonstration Records</span>
+                    </button>
+                    <button
+                      onClick={() => setShowNewInquiryModal(true)}
+                      className={styles.secondaryBtn}
+                      style={{ width: "100%", justifyContent: "center", padding: "10px" }}
+                    >
+                      <IconPlus size={16} color="currentColor" />
+                      <span>Create New Client Inquiry</span>
+                    </button>
                     <button
                       onClick={() => {
                         setActiveTab("catalog");
                         setShowNewProductModal(true);
                       }}
-                      className={styles.primaryBtn}
-                      style={{ width: "100%", justifyContent: "center" }}
+                      className={styles.secondaryBtn}
+                      style={{ width: "100%", justifyContent: "center", padding: "10px" }}
                     >
-                      <IconPlus size={16} color="#050507" />
+                      <IconGrid size={16} color="currentColor" />
                       <span>Add New Catalog Offering</span>
                     </button>
-                    <button
-                      onClick={() => {
-                        setActiveTab("faqs");
-                        setShowNewFaqModal(true);
-                      }}
-                      className={styles.secondaryBtn}
-                      style={{ width: "100%", justifyContent: "center", padding: "10px" }}
-                    >
-                      <IconHelpCircle size={16} color="currentColor" />
-                      <span>Create New FAQ Article</span>
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("portals")}
-                      className={styles.secondaryBtn}
-                      style={{ width: "100%", justifyContent: "center", padding: "10px" }}
-                    >
-                      <IconLayers size={16} color="currentColor" />
-                      <span>Configure Portal Hero Copy</span>
-                    </button>
+                    {(inquiries.length > 0 || liveOrders.length > 0) && (
+                      <button
+                        onClick={handleClearAllData}
+                        className={styles.secondaryBtn}
+                        style={{ width: "100%", justifyContent: "center", padding: "10px", color: "#f87171" }}
+                      >
+                        <IconTrash size={16} color="currentColor" />
+                        <span>Clear All Initialized Records</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -728,7 +1025,7 @@ export default function AdminDashboard() {
           )}
 
           {/* =========================================================
-              TAB 2: INQUIRIES DESK
+              TAB 2: CENTRAL INQUIRIES DESK
              ========================================================= */}
           {activeTab === "inquiries" && (
             <div>
@@ -750,31 +1047,50 @@ export default function AdminDashboard() {
                         color: statusFilter === st ? "#ffffff" : "var(--color-text-muted)",
                       }}
                     >
-                      {st === "all" ? "All Inquiries" : st}
+                      {st === "all" ? `All (${inquiries.length})` : `${st} (${inquiries.filter((i) => i.status.toLowerCase() === st.toLowerCase()).length})`}
                     </button>
                   ))}
                 </div>
 
-                <div style={{ position: "relative", minWidth: "260px" }}>
-                  <span style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)", display: "flex" }}>
-                    <IconSearch size={14} color="var(--color-text-muted)" />
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="Search by ID, client, email..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{
-                      width: "100%",
-                      background: "rgba(255, 255, 255, 0.04)",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                      borderRadius: "8px",
-                      padding: "9px 14px 9px 34px",
-                      color: "#ffffff",
-                      fontSize: "var(--text-sm)",
-                      outline: "none",
-                    }}
-                  />
+                <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
+                  <div style={{ position: "relative", minWidth: "240px" }}>
+                    <span style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)", display: "flex" }}>
+                      <IconSearch size={14} color="var(--color-text-muted)" />
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Search ID, client, email..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      style={{
+                        width: "100%",
+                        background: "rgba(255, 255, 255, 0.04)",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: "8px",
+                        padding: "9px 14px 9px 34px",
+                        color: "#ffffff",
+                        fontSize: "var(--text-sm)",
+                        outline: "none",
+                      }}
+                    />
+                  </div>
+
+                  <button onClick={() => setShowNewInquiryModal(true)} className={styles.primaryBtn}>
+                    <IconPlus size={15} color="#050507" />
+                    <span>Add Inquiry</span>
+                  </button>
+
+                  {inquiries.length === 0 ? (
+                    <button onClick={handleInitializeInquiriesOnly} className={styles.secondaryBtn}>
+                      <IconRefresh size={14} color="currentColor" />
+                      <span>Initialize Samples</span>
+                    </button>
+                  ) : (
+                    <button onClick={handleClearInquiriesOnly} className={styles.secondaryBtn} style={{ color: "#f87171" }}>
+                      <IconTrash size={14} color="currentColor" />
+                      <span>Clear</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -782,6 +1098,9 @@ export default function AdminDashboard() {
               <div className={styles.tableCard}>
                 <div className={styles.tableHeader}>
                   <div className={styles.tableTitle}>Inquiries Record ({filteredInquiries.length})</div>
+                  <span style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>
+                    Total Desk Value: ${inquiriesVolumeTotal.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  </span>
                 </div>
                 <div className={styles.tableWrapper}>
                   <table className={styles.dataTable}>
@@ -798,50 +1117,89 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredInquiries.map((inq) => (
-                        <tr key={inq.id}>
-                          <td style={{ fontWeight: 700, color: "#ffffff" }}>{inq.id}</td>
-                          <td>
-                            <span style={{ padding: "3px 8px", borderRadius: "4px", background: "rgba(255, 255, 255, 0.05)", fontSize: "var(--text-2xs)", fontWeight: 600 }}>
-                              {inq.portalName}
-                            </span>
-                          </td>
-                          <td>
-                            <div style={{ fontWeight: 600, color: "#ffffff" }}>{inq.client}</div>
-                            <div style={{ fontSize: "var(--text-2xs)", color: "var(--color-text-muted)" }}>{inq.email}</div>
-                          </td>
-                          <td>
-                            <div style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
-                              {inq.items.map((i) => `${i.name} (x${i.qty})`).join(", ").slice(0, 45)}
-                              {inq.items.length > 1 ? "..." : ""}
+                      {filteredInquiries.length === 0 ? (
+                        <tr>
+                          <td colSpan={8} style={{ textAlign: "center", padding: "50px 16px", color: "var(--color-text-muted)" }}>
+                            <IconInbox size={36} color="var(--color-text-dim)" />
+                            <div style={{ color: "#ffffff", fontSize: "var(--text-base)", marginTop: "12px", fontWeight: 600 }}>
+                              {inquiries.length === 0 ? "No Inquiries on Record" : "No matching inquiries found"}
                             </div>
-                          </td>
-                          <td style={{ fontWeight: 700, color: "#ffffff" }}>{inq.totalValue}</td>
-                          <td>
-                            <CustomDropdown
-                              value={inq.status}
-                              onChange={(val) => handleUpdateInquiryStatus(inq.id, val)}
-                              variant="status"
-                              options={[
-                                { value: "New", label: "New Inquiry", color: "#ffffff", bg: "rgba(255, 255, 255, 0.08)", borderColor: "rgba(255, 255, 255, 0.2)" },
-                                { value: "Reviewing", label: "Reviewing", color: "#ffffff", bg: "rgba(255, 255, 255, 0.05)", borderColor: "rgba(255, 255, 255, 0.15)" },
-                                { value: "Quoted", label: "Quoted", color: "#ffffff", bg: "rgba(255, 255, 255, 0.05)", borderColor: "rgba(255, 255, 255, 0.15)" },
-                                { value: "Fulfilled", label: "Fulfilled", color: "#25D366", bg: "rgba(37, 211, 102, 0.12)", borderColor: "rgba(37, 211, 102, 0.25)" },
-                              ]}
-                            />
-                          </td>
-                          <td style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>{inq.date}</td>
-                          <td>
-                            <button
-                              onClick={() => setSelectedInquiry(inq)}
-                              className={styles.secondaryBtn}
-                              style={{ padding: "4px 10px" }}
-                            >
-                              Inspect
-                            </button>
+                            <p style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)", maxWidth: "420px", margin: "6px auto 18px auto" }}>
+                              {inquiries.length === 0
+                                ? "Inquiries appear here dynamically when submitted by clients, or you can initialize demonstration data from this page."
+                                : "Try clearing your search query or switching your status filter to 'All'."}
+                            </p>
+                            {inquiries.length === 0 && (
+                              <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+                                <button onClick={handleInitializeInquiriesOnly} className={styles.primaryBtn}>
+                                  <IconRefresh size={14} color="#050507" />
+                                  <span>Initialize Sample Inquiries</span>
+                                </button>
+                                <button onClick={() => setShowNewInquiryModal(true)} className={styles.secondaryBtn}>
+                                  <IconPlus size={14} color="currentColor" />
+                                  <span>Add New Inquiry</span>
+                                </button>
+                              </div>
+                            )}
                           </td>
                         </tr>
-                      ))}
+                      ) : (
+                        filteredInquiries.map((inq) => (
+                          <tr key={inq.id}>
+                            <td style={{ fontWeight: 700, color: "#ffffff" }}>{inq.id}</td>
+                            <td>
+                              <span style={{ padding: "3px 8px", borderRadius: "4px", background: "rgba(255, 255, 255, 0.05)", fontSize: "var(--text-2xs)", fontWeight: 600 }}>
+                                {inq.portalName}
+                              </span>
+                            </td>
+                            <td>
+                              <div style={{ fontWeight: 600, color: "#ffffff" }}>{inq.client}</div>
+                              <div style={{ fontSize: "var(--text-2xs)", color: "var(--color-text-muted)" }}>{inq.email}</div>
+                            </td>
+                            <td>
+                              <div style={{ fontSize: "var(--text-sm)", color: "var(--color-text-secondary)" }}>
+                                {inq.items?.map((i) => `${i.name} (x${i.qty || 1})`).join(", ").slice(0, 45)}
+                                {inq.items && inq.items.length > 1 ? "..." : ""}
+                              </div>
+                            </td>
+                            <td style={{ fontWeight: 700, color: "#ffffff" }}>{inq.totalValue}</td>
+                            <td>
+                              <CustomDropdown
+                                value={inq.status}
+                                onChange={(val) => handleUpdateInquiryStatus(inq.id, val)}
+                                variant="status"
+                                options={[
+                                  { value: "New", label: "New Inquiry", color: "#ffffff", bg: "rgba(255, 255, 255, 0.08)", borderColor: "rgba(255, 255, 255, 0.2)" },
+                                  { value: "Reviewing", label: "Reviewing", color: "#ffffff", bg: "rgba(255, 255, 255, 0.05)", borderColor: "rgba(255, 255, 255, 0.15)" },
+                                  { value: "Quoted", label: "Quoted", color: "#ffffff", bg: "rgba(255, 255, 255, 0.05)", borderColor: "rgba(255, 255, 255, 0.15)" },
+                                  { value: "Fulfilled", label: "Fulfilled", color: "#25D366", bg: "rgba(37, 211, 102, 0.12)", borderColor: "rgba(37, 211, 102, 0.25)" },
+                                ]}
+                              />
+                            </td>
+                            <td style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>{inq.date}</td>
+                            <td>
+                              <div style={{ display: "flex", gap: "6px" }}>
+                                <button
+                                  onClick={() => setSelectedInquiry(inq)}
+                                  className={styles.secondaryBtn}
+                                  style={{ padding: "4px 8px" }}
+                                  title="Inspect"
+                                >
+                                  Inspect
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteInquiry(inq.id)}
+                                  className={styles.secondaryBtn}
+                                  style={{ padding: "4px 8px", color: "#f87171" }}
+                                  title="Delete"
+                                >
+                                  <IconTrash size={13} color="currentColor" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -958,7 +1316,7 @@ export default function AdminDashboard() {
           )}
 
           {/* =========================================================
-              TAB 4: CATALOG OFFERINGS (NO INVENTORY TRACKING)
+              TAB 4: CATALOG OFFERINGS
              ========================================================= */}
           {activeTab === "catalog" && (
             <div>
@@ -1145,7 +1503,7 @@ export default function AdminDashboard() {
                   <label className={styles.formLabel}>Admin Notification Email</label>
                   <input
                     type="email"
-                    defaultValue="ops@pushinpacks619.internal"
+                    defaultValue="Pushinpacks30@gmail.com"
                     className={styles.formInput}
                   />
                 </div>
@@ -1222,11 +1580,22 @@ export default function AdminDashboard() {
                     Verified orders recorded in database before customer was routed to WhatsApp click-to-chat.
                   </p>
                 </div>
-                <div style={{ display: "flex", gap: "var(--space-sm-md)", alignItems: "center" }}>
+                <div style={{ display: "flex", gap: "var(--space-sm-md)", alignItems: "center", flexWrap: "wrap" }}>
                   <button onClick={refreshAdminData} className={styles.secondaryBtn}>
                     <IconRefresh size={14} color="currentColor" />
                     <span>Refresh Orders</span>
                   </button>
+                  {liveOrders.length === 0 ? (
+                    <button onClick={handleInitializeOrdersOnly} className={styles.secondaryBtn}>
+                      <IconPlus size={14} color="currentColor" />
+                      <span>Initialize Sample Order</span>
+                    </button>
+                  ) : (
+                    <button onClick={handleClearOrdersOnly} className={styles.secondaryBtn} style={{ color: "#f87171" }}>
+                      <IconTrash size={14} color="currentColor" />
+                      <span>Clear Orders</span>
+                    </button>
+                  )}
                   <Link href="/checkout" target="_blank" className={styles.primaryBtn}>
                     <IconExternalLink size={14} color="#050507" />
                     <span>Open Live Checkout</span>
@@ -1234,7 +1603,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* KPI Metrics Row to Decompress and Give Visual Room */}
+              {/* KPI Metrics Row */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "var(--space-md-lg)", marginBottom: "8px" }}>
                 <div className={styles.metricCard}>
                   <div style={{ fontSize: "var(--text-2xs)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", color: "var(--color-text-muted)", marginBottom: "8px" }}>
@@ -1243,9 +1612,9 @@ export default function AdminDashboard() {
                   <div style={{ fontSize: "var(--text-3xl)", fontWeight: 800, color: "#ffffff", fontFamily: "var(--font-heading)" }}>
                     {liveOrders.length}
                   </div>
-                  <div style={{ fontSize: "var(--text-xs)", color: "var(--color-brand-green)", marginTop: "6px", display: "flex", alignItems: "center", gap: "6px" }}>
-                    <IconCheck size={14} color="#25D366" />
-                    <span>Recorded in Database</span>
+                  <div style={{ fontSize: "var(--text-xs)", color: liveOrders.length > 0 ? "var(--color-brand-green)" : "var(--color-text-dim)", marginTop: "6px", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <IconCheck size={14} color={liveOrders.length > 0 ? "#25D366" : "#71717a"} />
+                    <span>{liveOrders.length > 0 ? "Recorded in Database" : "No orders in database"}</span>
                   </div>
                 </div>
 
@@ -1278,7 +1647,7 @@ export default function AdminDashboard() {
                     Cumulative Desk Value
                   </div>
                   <div style={{ fontSize: "var(--text-3xl)", fontWeight: 800, color: "#ffffff", fontFamily: "var(--font-heading)" }}>
-                    ${liveOrders.reduce((sum, o) => sum + (Number(o.finalTotal ?? o.total) || 0), 0).toFixed(2)}
+                    ${ordersVolumeTotal.toFixed(2)}
                   </div>
                   <div style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)", marginTop: "6px" }}>
                     Verified order value
@@ -1290,16 +1659,23 @@ export default function AdminDashboard() {
                 <div className={styles.tableCard} style={{ padding: "56px 24px", textAlign: "center" }}>
                   <IconWhatsApp size={44} color="#25D366" />
                   <h4 style={{ color: "#ffffff", marginTop: "18px", marginBottom: "8px", fontSize: "var(--text-lg)" }}>No orders recorded yet</h4>
-                  <p style={{ color: "var(--color-text-muted)", fontSize: "var(--text-sm)", maxWidth: "440px", margin: "0 auto 24px auto", lineHeight: 1.6 }}>
-                    When customers complete the checkout flow at /checkout, orders are automatically saved here before launching WhatsApp.
+                  <p style={{ color: "var(--color-text-muted)", fontSize: "var(--text-sm)", maxWidth: "460px", margin: "0 auto 24px auto", lineHeight: 1.6 }}>
+                    When customers complete the checkout flow at /checkout, orders are automatically saved here before launching WhatsApp. You can also initialize a sample order for demonstration.
                   </p>
-                  <Link href="/checkout" className={styles.primaryBtn} style={{ display: "inline-flex" }}>
-                    Test WhatsApp Checkout
-                  </Link>
+                  <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+                    <button onClick={handleInitializeOrdersOnly} className={styles.secondaryBtn}>
+                      <IconPlus size={15} color="currentColor" />
+                      <span>Initialize Sample Order</span>
+                    </button>
+                    <Link href="/checkout" target="_blank" className={styles.primaryBtn} style={{ display: "inline-flex" }}>
+                      <IconExternalLink size={15} color="#050507" />
+                      <span>Test WhatsApp Checkout</span>
+                    </Link>
+                  </div>
                 </div>
               ) : (
                 <div className={styles.ordersTableCard}>
-                  {/* Spacious Search & Filter Bar */}
+                  {/* Search & Filter Bar */}
                   <div className={styles.ordersToolbar}>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1, minWidth: "260px" }}>
                       <div style={{ position: "relative", width: "100%", maxWidth: "380px" }}>
@@ -1586,13 +1962,13 @@ export default function AdminDashboard() {
                     </label>
                     <input
                       type="text"
-                      value={storeConfig.whatsAppNumber || ""}
-                      onChange={(e) => setStoreConfig({ ...storeConfig, whatsAppNumber: e.target.value })}
+                      value={storeConfig.whatsappNumber || storeConfig.whatsAppNumber || ""}
+                      onChange={(e) => setStoreConfig({ ...storeConfig, whatsappNumber: e.target.value, whatsAppNumber: e.target.value })}
                       className={styles.formInput}
-                      placeholder="e.g. 15550192834"
+                      placeholder="e.g. 16195550199"
                     />
                     <span style={{ fontSize: "var(--text-2xs)", color: "var(--color-text-dim)", marginTop: "4px" }}>
-                      Orders submitted by customers are directed to this WhatsApp account: https://wa.me/{storeConfig.whatsAppNumber}
+                      Orders submitted by customers are directed to this WhatsApp account: https://wa.me/{storeConfig.whatsappNumber || storeConfig.whatsAppNumber}
                     </span>
                   </div>
 
@@ -1612,8 +1988,8 @@ export default function AdminDashboard() {
                     <input
                       type="number"
                       step="0.01"
-                      value={storeConfig.deliveryFeeUsd ?? 15.00}
-                      onChange={(e) => setStoreConfig({ ...storeConfig, deliveryFeeUsd: parseFloat(e.target.value) || 0 })}
+                      value={storeConfig.deliveryFeeUSD ?? storeConfig.deliveryFeeUsd ?? 15.00}
+                      onChange={(e) => setStoreConfig({ ...storeConfig, deliveryFeeUSD: parseFloat(e.target.value) || 0, deliveryFeeUsd: parseFloat(e.target.value) || 0 })}
                       className={styles.formInput}
                     />
                   </div>
@@ -1622,19 +1998,20 @@ export default function AdminDashboard() {
                     <label className={styles.formLabel}>Store Contact Email</label>
                     <input
                       type="email"
-                      value={storeConfig.storeEmail || ""}
-                      onChange={(e) => setStoreConfig({ ...storeConfig, storeEmail: e.target.value })}
+                      value={storeConfig.storeContactEmail || storeConfig.storeEmail || ""}
+                      onChange={(e) => setStoreConfig({ ...storeConfig, storeContactEmail: e.target.value, storeEmail: e.target.value })}
                       className={styles.formInput}
                     />
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Support / Operating Hours</label>
+                    <label className={styles.formLabel}>Telegram Contact Link</label>
                     <input
                       type="text"
-                      value={storeConfig.operatingHours || ""}
-                      onChange={(e) => setStoreConfig({ ...storeConfig, operatingHours: e.target.value })}
+                      value={storeConfig.telegramNumber || ""}
+                      onChange={(e) => setStoreConfig({ ...storeConfig, telegramNumber: e.target.value })}
                       className={styles.formInput}
+                      placeholder="e.g. https://t.me/packmans619_1"
                     />
                   </div>
                 </div>
@@ -1650,50 +2027,34 @@ export default function AdminDashboard() {
                 </p>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                  {(storeConfig.paymentMethods || []).map((pm, idx) => (
-                    <div
-                      key={pm.id}
-                      style={{
-                        padding: "16px",
-                        borderRadius: "8px",
-                        background: "rgba(255, 255, 255, 0.02)",
-                        border: "1px solid rgba(255, 255, 255, 0.06)",
-                      }}
-                    >
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                          <span style={{ fontWeight: 700, color: "#ffffff", fontSize: "var(--text-md)" }}>{pm.name}</span>
-                          <span style={{ fontSize: "var(--text-2xs)", color: "var(--color-text-dim)" }}>({pm.id})</span>
+                  {storeConfig.paymentInstructions &&
+                    Object.keys(storeConfig.paymentInstructions).map((key) => (
+                      <div
+                        key={key}
+                        style={{
+                          padding: "16px",
+                          borderRadius: "8px",
+                          background: "rgba(255, 255, 255, 0.02)",
+                          border: "1px solid rgba(255, 255, 255, 0.06)",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                          <span style={{ fontWeight: 700, color: "#ffffff", fontSize: "var(--text-md)", textTransform: "uppercase" }}>{key}</span>
                         </div>
-                        <label style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "var(--text-xs)", color: "var(--color-text-muted)", cursor: "pointer" }}>
-                          <input
-                            type="checkbox"
-                            checked={pm.enabled !== false}
+                        <div className={styles.formGroup} style={{ marginBottom: 0 }}>
+                          <label className={styles.formLabel}>Instructions Text</label>
+                          <textarea
+                            rows={2}
+                            value={storeConfig.paymentInstructions[key] || ""}
                             onChange={(e) => {
-                              const updatedMethods = [...storeConfig.paymentMethods];
-                              updatedMethods[idx] = { ...pm, enabled: e.target.checked };
-                              setStoreConfig({ ...storeConfig, paymentMethods: updatedMethods });
+                              const updated = { ...storeConfig.paymentInstructions, [key]: e.target.value };
+                              setStoreConfig({ ...storeConfig, paymentInstructions: updated });
                             }}
+                            className={styles.formTextarea}
                           />
-                          <span>Enabled on Checkout</span>
-                        </label>
+                        </div>
                       </div>
-
-                      <div className={styles.formGroup} style={{ marginBottom: 0 }}>
-                        <label className={styles.formLabel}>Instructions Text</label>
-                        <textarea
-                          rows={2}
-                          value={pm.instructions || ""}
-                          onChange={(e) => {
-                            const updatedMethods = [...storeConfig.paymentMethods];
-                            updatedMethods[idx] = { ...pm, instructions: e.target.value };
-                            setStoreConfig({ ...storeConfig, paymentMethods: updatedMethods });
-                          }}
-                          className={styles.formTextarea}
-                        />
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
 
                 <div style={{ marginTop: "var(--space-md-lg)", display: "flex", justifyContent: "flex-end" }}>
@@ -1749,7 +2110,7 @@ export default function AdminDashboard() {
                 Requested Items
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                {selectedInquiry.items.map((it, idx) => (
+                {selectedInquiry.items?.map((it, idx) => (
                   <div
                     key={idx}
                     style={{
@@ -1764,7 +2125,7 @@ export default function AdminDashboard() {
                   >
                     <div>
                       <div style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "#ffffff" }}>{it.name}</div>
-                      <div style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>Quantity: {it.qty}</div>
+                      <div style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>Quantity: {it.qty || 1}</div>
                     </div>
                     <div style={{ fontWeight: 700, color: "#ffffff" }}>{it.price}</div>
                   </div>
@@ -1812,7 +2173,133 @@ export default function AdminDashboard() {
       )}
 
       {/* =========================================================
-          MODAL 2: NEW PRODUCT OFFERING (NO INVENTORY TRACKING)
+          MODAL 2: NEW INQUIRY MODAL (ADMIN INITIATIVE)
+         ========================================================= */}
+      {showNewInquiryModal && (
+        <div className={styles.modalBackdrop} onClick={() => setShowNewInquiryModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div className={styles.modalTitle}>Add New Client Inquiry</div>
+              <button
+                onClick={() => setShowNewInquiryModal(false)}
+                style={{ background: "transparent", border: "none", color: "var(--color-text-muted)", fontSize: "var(--text-xl)", cursor: "pointer" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateInquirySubmit}>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Origin Sub-Portal</label>
+                <CustomDropdown
+                  value={newInquiryData.portalKey}
+                  onChange={(val) => setNewInquiryData({ ...newInquiryData, portalKey: val })}
+                  options={[
+                    { value: "peptides", label: "Peptides (/peptides)" },
+                    { value: "budcart", label: "Bud'Cart (/budcart)" },
+                    { value: "stocks", label: "Stocks (/stocks)" },
+                    { value: "glock", label: "Glock Precision (/glock)" },
+                    { value: "psychedelics", label: "Psychedelics (/psychedelics)" },
+                    { value: "pharms", label: "Pharms & Lab (/pharms)" },
+                  ]}
+                />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm-md)" }}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Client Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Dr. Vance"
+                    value={newInquiryData.client}
+                    onChange={(e) => setNewInquiryData({ ...newInquiryData, client: e.target.value })}
+                    required
+                    className={styles.formInput}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Client Email</label>
+                  <input
+                    type="email"
+                    placeholder="e.g. client@domain.com"
+                    value={newInquiryData.email}
+                    onChange={(e) => setNewInquiryData({ ...newInquiryData, email: e.target.value })}
+                    required
+                    className={styles.formInput}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Item Description</label>
+                <input
+                  type="text"
+                  placeholder="e.g. GHK-Cu Copper Peptide (50mg * 10 vials)"
+                  value={newInquiryData.itemName}
+                  onChange={(e) => setNewInquiryData({ ...newInquiryData, itemName: e.target.value })}
+                  required
+                  className={styles.formInput}
+                />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm-md)" }}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Quantity</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={newInquiryData.qty}
+                    onChange={(e) => setNewInquiryData({ ...newInquiryData, qty: e.target.value })}
+                    required
+                    className={styles.formInput}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Estimated Total Price</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. $150.00"
+                    value={newInquiryData.price}
+                    onChange={(e) => setNewInquiryData({ ...newInquiryData, price: e.target.value })}
+                    required
+                    className={styles.formInput}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Client Notes / Dispatch Instructions</label>
+                <textarea
+                  placeholder="Specific cold chain packaging or certificate requirements..."
+                  value={newInquiryData.notes}
+                  onChange={(e) => setNewInquiryData({ ...newInquiryData, notes: e.target.value })}
+                  rows={3}
+                  className={styles.formTextarea}
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "24px" }}>
+                <button type="submit" className={styles.primaryBtn} style={{ flex: 1, justifyContent: "center" }}>
+                  Record Inquiry
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowNewInquiryModal(false)}
+                  className={styles.secondaryBtn}
+                  style={{ flex: 1, justifyContent: "center" }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================
+          MODAL 3: NEW PRODUCT OFFERING
          ========================================================= */}
       {showNewProductModal && (
         <div className={styles.modalBackdrop} onClick={() => setShowNewProductModal(false)}>
@@ -1932,7 +2419,7 @@ export default function AdminDashboard() {
       )}
 
       {/* =========================================================
-          MODAL 3: NEW FAQ ARTICLE
+          MODAL 4: NEW FAQ ARTICLE
          ========================================================= */}
       {showNewFaqModal && (
         <div className={styles.modalBackdrop} onClick={() => setShowNewFaqModal(false)}>
@@ -2007,7 +2494,7 @@ export default function AdminDashboard() {
       )}
 
       {/* =========================================================
-          MODAL 4: ORDER INSPECTOR MODAL
+          MODAL 5: ORDER INSPECTOR MODAL
          ========================================================= */}
       {selectedOrder && (
         <div className={styles.modalBackdrop} onClick={() => setSelectedOrder(null)}>
