@@ -7,7 +7,7 @@ import { IconTelegram } from "./Icons";
 export default function TelegramFloatingButton() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
-  const telegramUrl = "https://t.me/+HImHG4wbxOQ5ZGU0?utm_source=chatgpt.com";
+  const telegramUrl = "https://t.me/+HImHG4wbxOQ5ZGU0";
 
   useEffect(() => {
     setMounted(true);
