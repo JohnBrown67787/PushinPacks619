@@ -7,13 +7,13 @@ import styles from "./PortalNavbar.module.css";
 import { IconCart, IconChevronDown, IconCheck, IconTelegram, IconWhatsApp } from "./Icons";
 
 const PORTAL_LIST = [
-  { id: "hub", name: "All Portals Hub", path: "/", icon: "🌐" },
-  { id: "peptides", name: "Peptides", path: "/peptides", icon: "🧬" },
-  { id: "budcart", name: "Bud'Cart", path: "/budcart", icon: "🌿" },
-  { id: "stocks", name: "Stocks", path: "/stocks", icon: "💎" },
-  { id: "glock", name: "Glock Precision", path: "/glock", icon: "🎯" },
-  { id: "psychedelics", name: "Psychedelics", path: "/psychedelics", icon: "🍄" },
-  { id: "pharms", name: "Pharms & Lab", path: "/pharms", icon: "💊" },
+  { id: "hub", name: "All Portals Hub", path: "/" },
+  { id: "peptides", name: "Peptides", path: "/peptides" },
+  { id: "budcart", name: "Bud'Cart", path: "/budcart" },
+  { id: "stocks", name: "Stocks", path: "/stocks" },
+  { id: "glock", name: "Glock Precision", path: "/glock" },
+  { id: "psychedelics", name: "Psychedelics", path: "/psychedelics" },
+  { id: "pharms", name: "Pharms & Lab", path: "/pharms" },
 ];
 
 export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpenCart }) {
@@ -137,10 +137,7 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                         className={styles.portalMenuItem}
                         data-active={isCurrent}
                       >
-                        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <span>{item.icon}</span>
-                          <span>{item.name}</span>
-                        </span>
+                        <span>{item.name}</span>
                         {isCurrent && <IconCheck size={14} color="#10b981" />}
                       </Link>
                     );
@@ -233,7 +230,6 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`${styles.drawerNavItem} ${activeTab === "home" ? styles.drawerNavItemActive : ""}`}
                 >
-                  <span className={styles.drawerNavIcon}>🏠</span>
                   <span className={styles.drawerNavText}>Landing Overview</span>
                 </Link>
                 <Link
@@ -241,7 +237,6 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`${styles.drawerNavItem} ${activeTab === "products" ? styles.drawerNavItemActive : ""}`}
                 >
-                  <span className={styles.drawerNavIcon}>📦</span>
                   <span className={styles.drawerNavText}>Browse All Products</span>
                   <span className={styles.drawerNavCount}>{catalog.products?.length || 0}</span>
                 </Link>
@@ -250,7 +245,6 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`${styles.drawerNavItem} ${activeTab === "faq" ? styles.drawerNavItemActive : ""}`}
                 >
-                  <span className={styles.drawerNavIcon}>❓</span>
                   <span className={styles.drawerNavText}>FAQs & Protocol Guide</span>
                 </Link>
               </div>
@@ -269,7 +263,6 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`${styles.portalCard} ${isCurrent ? styles.portalCardActive : ""}`}
                     >
-                      <span className={styles.portalCardIcon}>{item.icon}</span>
                       <span className={styles.portalCardName}>{item.name}</span>
                       {isCurrent && <span className={styles.portalCardActiveDot} />}
                     </Link>
