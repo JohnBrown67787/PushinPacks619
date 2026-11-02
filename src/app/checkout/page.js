@@ -396,15 +396,16 @@ Thank you for choosing PushinPacks619!`;
       {/* Top Navigation Bar */}
       <header className={styles.header}>
         <div className={styles.headerContainer}>
-          <Link href="/" className={styles.brandLink}>
+          <Link href="/" className={styles.brandLink} aria-label="Return to PushinPacks Hub">
             <span className={styles.brandBadge}>PUSHIN PACKS</span>
             <span className={styles.brandName}>Direct Desk</span>
           </Link>
 
           <div className={styles.headerMeta}>
             <div className={styles.secureNotice}>
-              <IconLock width={15} height={15} />
-              <span>SSL Encrypted Checkout</span>
+              <IconLock width={14} height={14} />
+              <span className={styles.secureNoticeFull}>SSL Encrypted Checkout</span>
+              <span className={styles.secureNoticeMobile}>SSL Encrypted</span>
             </div>
           </div>
         </div>
@@ -414,10 +415,12 @@ Thank you for choosing PushinPacks619!`;
       <div className={styles.topBanner}>
         <div>
           <h1 className={styles.pageTitle}>Express Checkout</h1>
+          <p className={styles.pageSubtitle}>Direct encrypted inquiry & dispatch coordination</p>
         </div>
-        <Link href="/" className={styles.backLink}>
-          <IconArrowLeft width={16} height={16} />
-          <span>Continue Shopping</span>
+        <Link href="/" className={styles.backLink} aria-label="Continue Shopping">
+          <IconArrowLeft width={15} height={15} />
+          <span className={styles.backLinkFull}>Continue Shopping</span>
+          <span className={styles.backLinkMobile}>Shop</span>
         </Link>
       </div>
 
