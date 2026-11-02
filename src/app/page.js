@@ -85,8 +85,9 @@ export default function Home() {
           <Image
             src="/logo.jpg"
             alt="PushinPacks Logo"
-            width={38}
-            height={38}
+            width={36}
+            height={36}
+            style={{ width: "36px", height: "36px", borderRadius: "8px", flexShrink: 0, objectFit: "cover" }}
             className={styles.navLogoImg}
             priority
           />
@@ -99,14 +100,16 @@ export default function Home() {
             className={styles.checkoutBtn}
             aria-label="Express Checkout"
           >
-            Express Checkout
+            <span className={styles.checkoutBtnText}>Express Checkout</span>
+            <span className={styles.checkoutBtnMobileText}>Checkout</span>
           </Link>
           <Link
             href="/admin"
             className={styles.adminBtn}
             aria-label="Admin Console"
           >
-            Admin Console
+            <span className={styles.adminBtnText}>Admin Console</span>
+            <span className={styles.adminBtnMobileText}>Admin</span>
           </Link>
         </div>
       </header>
