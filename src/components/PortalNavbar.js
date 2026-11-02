@@ -4,16 +4,16 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./PortalNavbar.module.css";
-import { IconCart, IconChevronDown, IconCheck } from "./Icons";
+import { IconCart, IconChevronDown, IconCheck, IconTelegram, IconWhatsApp } from "./Icons";
 
 const PORTAL_LIST = [
-  { id: "hub", name: "All Portals Hub", path: "/" },
-  { id: "peptides", name: "Peptides (/peptides)", path: "/peptides" },
-  { id: "budcart", name: "Bud'Cart (/budcart)", path: "/budcart" },
-  { id: "stocks", name: "Stocks (/stocks)", path: "/stocks" },
-  { id: "glock", name: "Glock Precision (/glock)", path: "/glock" },
-  { id: "psychedelics", name: "Psychedelics (/psychedelics)", path: "/psychedelics" },
-  { id: "pharms", name: "Pharms & Lab (/pharms)", path: "/pharms" },
+  { id: "hub", name: "All Portals Hub", path: "/", icon: "🌐" },
+  { id: "peptides", name: "Peptides", path: "/peptides", icon: "🧬" },
+  { id: "budcart", name: "Bud'Cart", path: "/budcart", icon: "🌿" },
+  { id: "stocks", name: "Stocks", path: "/stocks", icon: "💎" },
+  { id: "glock", name: "Glock Precision", path: "/glock", icon: "🎯" },
+  { id: "psychedelics", name: "Psychedelics", path: "/psychedelics", icon: "🍄" },
+  { id: "pharms", name: "Pharms & Lab", path: "/pharms", icon: "💊" },
 ];
 
 export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpenCart }) {
@@ -39,10 +39,22 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
     };
   }, [isPortalDropdownOpen]);
 
-  // Close mobile menu when menu items are clicked or on large screens
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
+  // Close mobile menu on resize to desktop
   useEffect(() => {
     function handleResize() {
-      if (window.innerWidth > 1024) {
+      if (window.innerWidth > 960) {
         setIsMobileMenuOpen(false);
       }
     }
@@ -51,163 +63,256 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
   }, []);
 
   return (
-    <header className={styles.navbar}>
-      {/* Navbar Container: Uses fluid layout with auto-wrapping */}
-      <div className={styles.navbarInner}>
-        {/* Logo Section: Shrinks smoothly as space decreases */}
-        <div className={styles.navLogo}>
-          <Link href={portalPath} className={styles.navLogoLink}>
-            <Image
-              src="/logo.jpg"
-              alt="PushinPacks Logo"
-              width={32}
-              height={32}
-              className={styles.navLogoImg}
-              priority
-            />
-            <span className={styles.navBrand}>
-              PushinPacks <span className={styles.navBrandSub}>/ {catalog.name}</span>
-            </span>
-          </Link>
-        </div>
-
-        {/* Spacer: Grows to push right items to the edge */}
-        <div className={styles.navSpacer} />
-
-        {/* Main Navigation Links: Hidden on small screens, shown on larger ones */}
-        <nav className={styles.navLinks}>
-          <Link
-            href={portalPath}
-            className={activeTab === "home" ? styles.navLinkActive : styles.navLink}
-          >
-            Landing
-          </Link>
-          <Link
-            href={`${portalPath}/products`}
-            className={activeTab === "products" ? styles.navLinkActive : styles.navLink}
-          >
-            Products
-          </Link>
-          <Link
-            href={`${portalPath}/faq`}
-            className={activeTab === "faq" ? styles.navLinkActive : styles.navLink}
-          >
-            FAQs
-          </Link>
-        </nav>
-
-        {/* Right Actions: Portals, Cart, Checkout, Mobile Toggle */}
-        <div className={styles.navActions}>
-          {/* Portal Switcher: Scales down label on mobile */}
-          <div ref={dropdownRef} className={styles.portalDropdown}>
-            <button
-              type="button"
-              onClick={() => setIsPortalDropdownOpen((prev) => !prev)}
-              aria-label="Switch Catalog Portal"
-              className={styles.portalButton}
-              data-active={isPortalDropdownOpen}
-            >
-              <span className={styles.portalLabel}>Portals</span>
-              <span className={styles.portalChevron} data-active={isPortalDropdownOpen}>
-                <IconChevronDown size={12} color="#a1a1aa" />
+    <>
+      <header className={styles.navbar}>
+        <div className={styles.navbarInner}>
+          {/* Logo Section */}
+          <div className={styles.navLogo}>
+            <Link href={portalPath} className={styles.navLogoLink}>
+              <Image
+                src="/logo.jpg"
+                alt="PushinPacks Logo"
+                width={30}
+                height={30}
+                className={styles.navLogoImg}
+                priority
+              />
+              <span className={styles.navBrand}>
+                PushinPacks <span className={styles.navBrandSub}>/ {catalog.name}</span>
               </span>
+            </Link>
+          </div>
+
+          <div className={styles.navSpacer} />
+
+          {/* Desktop/Tablet Nav Links (Visible on >= 960px) */}
+          <nav className={styles.navLinks}>
+            <Link
+              href={portalPath}
+              className={activeTab === "home" ? styles.navLinkActive : styles.navLink}
+            >
+              Landing
+            </Link>
+            <Link
+              href={`${portalPath}/products`}
+              className={activeTab === "products" ? styles.navLinkActive : styles.navLink}
+            >
+              Products
+            </Link>
+            <Link
+              href={`${portalPath}/faq`}
+              className={activeTab === "faq" ? styles.navLinkActive : styles.navLink}
+            >
+              FAQs
+            </Link>
+          </nav>
+
+          {/* Right Actions */}
+          <div className={styles.navActions}>
+            {/* Desktop Portal Switcher */}
+            <div ref={dropdownRef} className={styles.portalDropdown}>
+              <button
+                type="button"
+                onClick={() => setIsPortalDropdownOpen((prev) => !prev)}
+                aria-label="Switch Catalog Portal"
+                className={styles.portalButton}
+                data-active={isPortalDropdownOpen}
+              >
+                <span className={styles.portalLabel}>Portals</span>
+                <span className={styles.portalChevron} data-active={isPortalDropdownOpen}>
+                  <IconChevronDown size={12} color="currentColor" />
+                </span>
+              </button>
+
+              {isPortalDropdownOpen && (
+                <div className={styles.portalMenu}>
+                  <div className={styles.portalMenuLabel}>Autonomous Divisions</div>
+                  {PORTAL_LIST.map((item) => {
+                    const isCurrent = item.id === catalog.slug;
+                    return (
+                      <Link
+                        key={item.id}
+                        href={item.path}
+                        onClick={() => setIsPortalDropdownOpen(false)}
+                        className={styles.portalMenuItem}
+                        data-active={isCurrent}
+                      >
+                        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <span>{item.icon}</span>
+                          <span>{item.name}</span>
+                        </span>
+                        {isCurrent && <IconCheck size={14} color="#10b981" />}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Cart Button */}
+            <button
+              onClick={onOpenCart}
+              className={styles.cartButton}
+              aria-label="View Inquiry Cart"
+            >
+              <IconCart size={16} color="var(--color-bg-deep)" />
+              <span className={styles.cartLabel}>Cart</span>
+              {cartCount > 0 && (
+                <span className={styles.cartBadge}>
+                  {cartCount}
+                </span>
+              )}
             </button>
 
-            {isPortalDropdownOpen && (
-              <div className={styles.portalMenu}>
-                <div className={styles.portalMenuLabel}>Autonomous Portals</div>
+            {/* Desktop Checkout Link (>= 960px) */}
+            <Link
+              href="/checkout"
+              className={styles.checkoutButton}
+            >
+              Checkout
+            </Link>
+
+            {/* Mobile Menu Toggle (< 960px) */}
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              className={styles.mobileMenuToggle}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open navigation menu"}
+              aria-expanded={isMobileMenuOpen}
+              data-active={isMobileMenuOpen}
+            >
+              {isMobileMenuOpen ? "✕" : "☰"}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile App Navigation Drawer (< 960px) */}
+      {isMobileMenuOpen && (
+        <div
+          className={styles.mobileDrawerBackdrop}
+          onClick={() => setIsMobileMenuOpen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className={styles.mobileDrawerContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Drawer Top Header */}
+            <div className={styles.drawerHeader}>
+              <div className={styles.drawerBrand}>
+                <Image
+                  src="/logo.jpg"
+                  alt="Logo"
+                  width={28}
+                  height={28}
+                  style={{ borderRadius: "6px" }}
+                />
+                <div>
+                  <div className={styles.drawerBrandTitle}>PushinPacks</div>
+                  <div className={styles.drawerBrandSub}>{catalog.name} Division</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={styles.drawerCloseBtn}
+                aria-label="Close menu"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Main Navigation Links */}
+            <div className={styles.drawerSection}>
+              <div className={styles.drawerSectionLabel}>Navigation</div>
+              <div className={styles.drawerNavList}>
+                <Link
+                  href={portalPath}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`${styles.drawerNavItem} ${activeTab === "home" ? styles.drawerNavItemActive : ""}`}
+                >
+                  <span className={styles.drawerNavIcon}>🏠</span>
+                  <span className={styles.drawerNavText}>Landing Overview</span>
+                </Link>
+                <Link
+                  href={`${portalPath}/products`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`${styles.drawerNavItem} ${activeTab === "products" ? styles.drawerNavItemActive : ""}`}
+                >
+                  <span className={styles.drawerNavIcon}>📦</span>
+                  <span className={styles.drawerNavText}>Browse All Products</span>
+                  <span className={styles.drawerNavCount}>{catalog.products?.length || 0}</span>
+                </Link>
+                <Link
+                  href={`${portalPath}/faq`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`${styles.drawerNavItem} ${activeTab === "faq" ? styles.drawerNavItemActive : ""}`}
+                >
+                  <span className={styles.drawerNavIcon}>❓</span>
+                  <span className={styles.drawerNavText}>FAQs & Protocol Guide</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Portals Switcher Grid */}
+            <div className={styles.drawerSection}>
+              <div className={styles.drawerSectionLabel}>Switch Division Portal</div>
+              <div className={styles.portalGrid}>
                 {PORTAL_LIST.map((item) => {
                   const isCurrent = item.id === catalog.slug;
                   return (
                     <Link
                       key={item.id}
                       href={item.path}
-                      onClick={() => setIsPortalDropdownOpen(false)}
-                      className={styles.portalMenuItem}
-                      data-active={isCurrent}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`${styles.portalCard} ${isCurrent ? styles.portalCardActive : ""}`}
                     >
-                      <span>{item.name}</span>
-                      {isCurrent && <IconCheck size={13} color="#25D366" />}
+                      <span className={styles.portalCardIcon}>{item.icon}</span>
+                      <span className={styles.portalCardName}>{item.name}</span>
+                      {isCurrent && <span className={styles.portalCardActiveDot} />}
                     </Link>
                   );
                 })}
               </div>
-            )}
+            </div>
+
+            {/* Quick Actions & Checkout */}
+            <div className={styles.drawerFooter}>
+              <Link
+                href="/checkout"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={styles.drawerCheckoutBtn}
+              >
+                <span>Express Checkout</span>
+                {cartCount > 0 && <span className={styles.drawerCartPill}>{cartCount} items</span>}
+                <span>→</span>
+              </Link>
+
+              <div className={styles.drawerContactRow}>
+                <a
+                  href="https://t.me/+HImHG4wbxOQ5ZGU0?utm_source=chatgpt.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.drawerContactBtn}
+                >
+                  <IconTelegram size={16} />
+                  <span>Join Telegram</span>
+                </a>
+                <a
+                  href="https://t.me/packmans619_1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.drawerContactBtn}
+                >
+                  <span>@packmans619_1</span>
+                </a>
+              </div>
+            </div>
           </div>
-
-          {/* Cart Button: Icon + label shrinks to icon on small screens */}
-          <button
-            onClick={onOpenCart}
-            className={styles.cartButton}
-            aria-label="View Inquiry Cart"
-          >
-            <IconCart size={16} color="var(--color-bg-deep)" />
-            <span className={styles.cartLabel}>Cart</span>
-            {cartCount > 0 && (
-              <span className={styles.cartBadge}>
-                {cartCount}
-              </span>
-            )}
-          </button>
-
-          {/* Checkout Link: Hidden on small screens */}
-          <Link
-            href="/checkout"
-            className={styles.checkoutButton}
-          >
-            Checkout
-          </Link>
-
-          {/* Mobile Menu Toggle: Only visible on small screens */}
-          <button
-            type="button"
-            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-            className={styles.mobileMenuToggle}
-            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={isMobileMenuOpen}
-            data-active={isMobileMenuOpen}
-          >
-            {isMobileMenuOpen ? "✕" : "☰"}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu: Slides down when toggled */}
-      {isMobileMenuOpen && (
-        <div className={styles.mobileMenu}>
-          <Link
-            href={portalPath}
-            onClick={() => setIsMobileMenuOpen(false)}
-            className={styles.mobileMenuItem}
-            data-active={activeTab === "home"}
-          >
-            Landing Page
-          </Link>
-          <Link
-            href={`${portalPath}/products`}
-            onClick={() => setIsMobileMenuOpen(false)}
-            className={styles.mobileMenuItem}
-            data-active={activeTab === "products"}
-          >
-            Browse Products ({catalog.products?.length || 0})
-          </Link>
-          <Link
-            href={`${portalPath}/faq`}
-            onClick={() => setIsMobileMenuOpen(false)}
-            className={styles.mobileMenuItem}
-            data-active={activeTab === "faq"}
-          >
-            Frequently Asked Questions
-          </Link>
-          <Link
-            href="/checkout"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className={styles.mobileCheckout}
-          >
-            Express Checkout →
-          </Link>
         </div>
       )}
-    </header>
+    </>
   );
 }

@@ -103,7 +103,7 @@ export default function FaqView({ catalog }) {
         }}
       >
         <div className={styles.heroSectionOverlay}></div>
-        <div style={{ position: "relative", zIndex: 1, maxWidth: "880px", margin: "0 auto", padding: "64px 32px 56px", width: "100%", textAlign: "center" }}>
+        <div style={{ position: "relative", zIndex: 1, maxWidth: "880px", margin: "0 auto", padding: "clamp(36px, 6vw, 64px) clamp(16px, 4vw, 32px) clamp(28px, 4vw, 56px)", width: "100%", textAlign: "center" }}>
           <div style={{ marginBottom: "16px" }}>
             <span style={{ fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "1.5px", color: "var(--color-text-muted)", fontWeight: 600 }}>
               Knowledge Base &amp; Protocol Support
@@ -119,7 +119,7 @@ export default function FaqView({ catalog }) {
       </section>
 
       {/* Accordion FAQ Section */}
-      <section style={{ maxWidth: "880px", margin: "0 auto", padding: "16px 32px 64px", width: "100%" }}>
+      <section style={{ maxWidth: "880px", margin: "0 auto", padding: "16px clamp(14px, 4vw, 32px) 48px", width: "100%" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm-md)" }}>
           {catalog.faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
@@ -189,15 +189,15 @@ export default function FaqView({ catalog }) {
       </section>
 
       {/* Cross-Link Card Banner */}
-      <section style={{ maxWidth: "880px", margin: "0 auto", padding: "0 32px 80px", width: "100%" }}>
+      <section style={{ maxWidth: "880px", margin: "0 auto", padding: "0 clamp(14px, 4vw, 32px) 80px", width: "100%" }}>
         <div
           style={{
             background: "rgba(18, 18, 24, 0.6)",
             border: "1px solid rgba(255, 255, 255, 0.08)",
             borderRadius: "8px",
-            padding: "36px",
+            padding: "clamp(18px, 4vw, 36px)",
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 250px), 1fr))",
             gap: "24px",
           }}
         >

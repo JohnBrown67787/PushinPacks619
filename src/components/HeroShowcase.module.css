@@ -494,6 +494,12 @@
   }
 }
 
+@media (max-width: 540px) {
+  .callouts {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   .stage {
     --line-len: 14px;

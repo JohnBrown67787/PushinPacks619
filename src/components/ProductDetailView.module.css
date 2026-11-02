@@ -822,3 +822,36 @@
   color: #10b981;
   font-weight: 600;
 }
+
+
+/* Mobile and Tablet actionRow & tiered pricing enhancement */
+@media (max-width: 640px) {
+  .container {
+    padding: 16px 14px 60px;
+  }
+  .actionRow {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .quantityPicker {
+    width: 100%;
+    justify-content: center;
+  }
+  .addToCartBtn,
+  .checkoutNowBtn {
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    font-size: 14px;
+  }
+  .tieredContainer {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .tierCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+  }
+}

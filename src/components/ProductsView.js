@@ -261,13 +261,13 @@ export default function ProductsView({ catalog }) {
       </section>
 
       {/* FAQ Banner Link */}
-      <section style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 32px 64px", width: "100%" }}>
+      <section style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 clamp(14px, 4vw, 32px) 64px", width: "100%" }}>
         <div
           style={{
             background: "rgba(18, 18, 24, 0.5)",
             border: "1px solid rgba(255, 255, 255, 0.08)",
             borderRadius: "8px",
-            padding: "32px",
+            padding: "clamp(18px, 4vw, 32px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
