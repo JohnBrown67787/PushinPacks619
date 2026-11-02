@@ -413,7 +413,7 @@ Thank you for choosing PushinPacks619!`;
       {/* Breadcrumb banner */}
       <div className={styles.topBanner}>
         <div>
-          <h1 className={styles.pageTitle}>Express WhatsApp Checkout</h1>
+          <h1 className={styles.pageTitle}>Express Checkout</h1>
         </div>
         <Link href="/" className={styles.backLink}>
           <IconArrowLeft width={16} height={16} />
@@ -485,7 +485,7 @@ Thank you for choosing PushinPacks619!`;
                     <IconAlertCircle width={13} height={13} /> {errors.phone}
                   </span>
                 ) : (
-                  <span className={styles.fieldHelper}>Include country code for instant WhatsApp routing</span>
+                  <span className={styles.fieldHelper}>Include country code or Telegram @handle</span>
                 )}
               </div>
             </div>

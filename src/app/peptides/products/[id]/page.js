@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import ProductDetailView from "../../../../components/ProductDetailView";
 import { CATALOGS } from "../../../../data/catalogs";
 
@@ -19,15 +18,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
-async function ProductDetailContent({ params }) {
+export default async function PeptidesProductDetailPage({ params }) {
   const { id } = await params;
   return <ProductDetailView catalog={CATALOGS.peptides} productId={id} />;
-}
-
-export default function PeptidesProductDetailPage({ params }) {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-black text-white flex items-center justify-center">Loading product...</div>}>
-      <ProductDetailContent params={params} />
-    </Suspense>
-  );
 }

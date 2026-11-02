@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import ProductDetailView from "../../../../components/ProductDetailView";
 import { CATALOGS } from "../../../../data/catalogs";
 
@@ -15,19 +14,11 @@ export async function generateMetadata({ params }) {
   const product = CATALOGS.pharms?.products?.find((p) => p.id === id);
   return {
     title: product ? `${product.name} | PushinPacks Pharms` : "Pharms Product Details | PushinPacks",
-    description: product ? product.description : "Authentic sealed pharmaceutical blister packs, original factory bottles, and lab-certified compounds.",
+    description: product ? product.description : "Factory-sealed pharmaceutical blister packs, verified NDC reserves, and certified compound lots.",
   };
 }
 
-async function ProductDetailContent({ params }) {
+export default async function PharmsProductDetailPage({ params }) {
   const { id } = await params;
   return <ProductDetailView catalog={CATALOGS.pharms} productId={id} />;
-}
-
-export default function PharmsProductDetailPage({ params }) {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-black text-white flex items-center justify-center">Loading product...</div>}>
-      <ProductDetailContent params={params} />
-    </Suspense>
-  );
 }

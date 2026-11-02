@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import ProductDetailView from "../../../../components/ProductDetailView";
 import { CATALOGS } from "../../../../data/catalogs";
 
@@ -15,19 +14,11 @@ export async function generateMetadata({ params }) {
   const product = CATALOGS.stocks?.products?.find((p) => p.id === id);
   return {
     title: product ? `${product.name} | PushinPacks Stocks` : "Stocks Product Details | PushinPacks",
-    description: product ? product.description : "Raw fishscale cocaine, Colombian export bricks, and triple-washed lavada crystal.",
+    description: product ? product.description : "Raw Colombian fishscale bricks, flake reserves, and high-purity crystalline solid inventories.",
   };
 }
 
-async function ProductDetailContent({ params }) {
+export default async function StocksProductDetailPage({ params }) {
   const { id } = await params;
   return <ProductDetailView catalog={CATALOGS.stocks} productId={id} />;
-}
-
-export default function StocksProductDetailPage({ params }) {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-black text-white flex items-center justify-center">Loading product...</div>}>
-      <ProductDetailContent params={params} />
-    </Suspense>
-  );
 }

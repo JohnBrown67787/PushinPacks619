@@ -126,52 +126,34 @@ export default function ProductsView({ catalog }) {
         </p>
 
         {/* Search & Filter Bar */}
-        <div style={{ marginTop: "24px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
-          {/* Category Filter Pills (swipeable horizontal list on mobile) */}
-          <div style={{ display: "flex", gap: "8px", overflowX: "auto", maxWidth: "100%", paddingBottom: "4px", WebkitOverflowScrolling: "touch" }}>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                style={{
-                  padding: "7px 14px",
-                  borderRadius: "8px",
-                  fontSize: "var(--text-sm)",
-                  fontWeight: selectedCategory === cat ? 700 : 500,
-                  cursor: "pointer",
-                  whiteSpace: "nowrap",
-                  flexShrink: 0,
-                  border: selectedCategory === cat ? "1px solid rgba(255, 255, 255, 0.25)" : "1px solid rgba(255, 255, 255, 0.08)",
-                  background: selectedCategory === cat ? "rgba(255, 255, 255, 0.08)" : "transparent",
-                  color: selectedCategory === cat ? "#ffffff" : "var(--color-text-secondary)",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                {cat}
-              </button>
-            ))}
+        <div className={styles.filterContainer}>
+          {/* Category Filter Pills (Wrap on desktop, smooth swipeable on mobile) */}
+          <div className={styles.categoryList}>
+            {categories.map((cat) => {
+              const isActive = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`${styles.categoryBtn} ${isActive ? styles.categoryBtnActive : ''}`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
           </div>
 
           {/* Search Input */}
-          <div style={{ position: "relative", flex: "1 1 240px", minWidth: "200px", maxWidth: "100%" }}>
-            <span style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)", display: "flex" }}>
-              <IconSearch size={16} color="var(--color-text-muted)" />
+          <div className={styles.searchWrap}>
+            <span style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "rgba(255, 255, 255, 0.5)", display: "flex", pointerEvents: "none" }}>
+              <IconSearch size={16} color="rgba(255, 255, 255, 0.6)" />
             </span>
             <input
               type="text"
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                width: "100%",
-                background: "rgba(255, 255, 255, 0.04)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                borderRadius: "8px",
-                padding: "9px 16px 9px 38px",
-                color: "#ffffff",
-                fontSize: "var(--text-sm)",
-                outline: "none",
-              }}
+              className={styles.searchInput}
             />
           </div>
         </div>
