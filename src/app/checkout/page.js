@@ -511,7 +511,7 @@ TOTAL: ${formatMoney(calculations.total)}`;
                     <IconAlertCircle width={13} height={13} /> {errors.phone}
                   </span>
                 ) : (
-                  <span className={styles.fieldHelper}>Include country code for WhatsApp order updates</span>
+                  <span className={styles.fieldHelper} suppressHydrationWarning>Include country code for WhatsApp order updates</span>
                 )}
               </div>
             </div>
@@ -531,7 +531,7 @@ TOTAL: ${formatMoney(calculations.total)}`;
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 autoComplete="email"
               />
-              <span className={styles.fieldHelper}>For order confirmation dispatch and receipt backup</span>
+              <span className={styles.fieldHelper} suppressHydrationWarning>For order confirmation dispatch and receipt backup</span>
             </div>
           </section>
 
@@ -946,7 +946,7 @@ TOTAL: ${formatMoney(calculations.total)}`;
                 )}
               </button>
 
-              <p className={styles.checkoutNotice}>
+              <p className={styles.checkoutNotice} suppressHydrationWarning>
                 Your order will be securely registered in our system, generating your verified reference code before opening WhatsApp.
               </p>
             </div>
