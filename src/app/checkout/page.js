@@ -511,7 +511,7 @@ TOTAL: ${formatMoney(calculations.total)}`;
                     <IconAlertCircle width={13} height={13} /> {errors.phone}
                   </span>
                 ) : (
-                  <span className={styles.fieldHelper}>Include country code or Telegram @handle</span>
+                  <span className={styles.fieldHelper}>Include country code for WhatsApp order updates</span>
                 )}
               </div>
             </div>
@@ -925,51 +925,29 @@ TOTAL: ${formatMoney(calculations.total)}`;
                 </div>
               </div>
 
-              {/* SECTION 7: Direct Messaging Checkout Buttons (WhatsApp & Telegram) */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <button
-                  type="button"
-                  className={styles.whatsAppBtn}
-                  onClick={() => handleCheckoutSubmit('whatsapp')}
-                  disabled={isSubmitting || cartItems.length === 0}
-                  id="btn-whatsapp-checkout"
-                >
-                  {isSubmitting && submittingChannel === 'whatsapp' ? (
-                    <>
-                      <IconSpinner width={20} height={20} />
-                      <span>Saving Order...</span>
-                    </>
-                  ) : (
-                    <>
-                      <IconWhatsApp width={22} height={22} color="#ffffff" />
-                      <span>Pay on WhatsApp</span>
-                    </>
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  className={styles.telegramBtn}
-                  onClick={() => handleCheckoutSubmit('telegram')}
-                  disabled={isSubmitting || cartItems.length === 0}
-                  id="btn-telegram-checkout"
-                >
-                  {isSubmitting && submittingChannel === 'telegram' ? (
-                    <>
-                      <IconSpinner width={20} height={20} />
-                      <span>Saving Order...</span>
-                    </>
-                  ) : (
-                    <>
-                      <IconTelegram size={22} />
-                      <span>Pay on Telegram</span>
-                    </>
-                  )}
-                </button>
-              </div>
+              {/* SECTION 7: Direct Messaging Checkout Button (WhatsApp) */}
+              <button
+                type="button"
+                className={styles.whatsAppBtn}
+                onClick={() => handleCheckoutSubmit('whatsapp')}
+                disabled={isSubmitting || cartItems.length === 0}
+                id="btn-whatsapp-checkout"
+              >
+                {isSubmitting && submittingChannel === 'whatsapp' ? (
+                  <>
+                    <IconSpinner width={20} height={20} />
+                    <span>Saving Order...</span>
+                  </>
+                ) : (
+                  <>
+                    <IconWhatsApp width={22} height={22} color="#ffffff" />
+                    <span>Pay on WhatsApp</span>
+                  </>
+                )}
+              </button>
 
               <p className={styles.checkoutNotice}>
-                Your order will be securely registered in our system, generating your verified reference code before opening WhatsApp or Telegram (<a href="https://t.me/packmans619_1" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 600 }}>@packmans619_1</a>).
+                Your order will be securely registered in our system, generating your verified reference code before opening WhatsApp.
               </p>
             </div>
           </div>
@@ -1087,16 +1065,7 @@ TOTAL: ${formatMoney(calculations.total)}`;
                     <span>Open WhatsApp Chat Now</span>
                   </a>
 
-                  <a
-                    href={completedOrder.telegramUrl || "https://t.me/packmans619_1"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.modalOpenTelegramBtn}
-                    style={{ background: 'transparent', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#ffffff', boxShadow: 'none' }}
-                  >
-                    <IconTelegram size={20} />
-                    <span>Or Chat on Telegram</span>
-                  </a>
+
                 </>
               )}
 
