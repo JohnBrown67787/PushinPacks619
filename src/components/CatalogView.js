@@ -288,6 +288,7 @@ export default function CatalogView({ catalog }) {
               className={styles.navLogoImg}
               priority
               unoptimized
+              suppressHydrationWarning
             />
             <span className={styles.navBrand}>
               PushinPacks <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>/ {catalog.name}</span>

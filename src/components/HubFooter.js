@@ -29,6 +29,7 @@ export default function HubFooter() {
                 className={styles.brandLogo}
                 style={{ width: "36px", height: "36px", minWidth: "36px", maxWidth: "36px", borderRadius: "8px", flexShrink: 0, objectFit: "cover" }}
                 unoptimized
+                suppressHydrationWarning
               />
               <span className={styles.brandName}>PUSHINPACKS619</span>
             </div>

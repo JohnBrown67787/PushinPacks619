@@ -78,6 +78,7 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                 className={styles.navLogoImg}
                 priority
                 unoptimized
+                suppressHydrationWarning
               />
               <span className={styles.navBrand}>
                 PushinPacks <span className={styles.navBrandSub}>/ {catalog.name}</span>
@@ -209,6 +210,7 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                   className={styles.drawerLogoImg}
                   style={{ width: "28px", height: "28px", minWidth: "28px", maxWidth: "28px", borderRadius: "6px", flexShrink: 0, objectFit: "cover" }}
                   unoptimized
+                  suppressHydrationWarning
                 />
                 <div>
                   <div className={styles.drawerBrandTitle}>PushinPacks</div>

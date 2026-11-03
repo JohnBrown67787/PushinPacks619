@@ -91,6 +91,7 @@ export default function Home() {
             className={styles.navLogoImg}
             priority
             unoptimized
+            suppressHydrationWarning
           />
           <span className={styles.navBrand}>PUSHINPACKS619</span>
         </Link>
