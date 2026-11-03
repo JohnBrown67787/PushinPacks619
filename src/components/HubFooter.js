@@ -115,8 +115,8 @@ export default function HubFooter() {
               <div className={styles.contactItem}>
                 <div>
                   <div className={styles.contactLabel}>Verified Dispatch Phone / WhatsApp</div>
-                  <a href="https://wa.me/16195550199" target="_blank" rel="noopener noreferrer" className={styles.contactValue}>
-                    +1 (619) 555-0199
+                  <a href="https://wa.me/13096411111" target="_blank" rel="noopener noreferrer" className={styles.contactValue}>
+                    +1 (309) 641-1111
                   </a>
                 </div>
               </div>
@@ -144,7 +144,7 @@ export default function HubFooter() {
                     <span>Telegram @packmans619_1</span>
                   </a>
                   <a
-                    href="https://wa.me/16195550199"
+                    href="https://wa.me/13096411111"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.accountPill}

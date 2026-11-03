@@ -219,60 +219,44 @@ export default function CheckoutPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Generate professional invoice from current checkout data
-  const generateInvoice = () => {
+  // Generate professional invoice in exact specified order format
+  const generateInvoice = (orderId) => {
     const paymentMethodName = selectedPaymentInfo?.name || paymentMethod;
 
     // Build product details section
-    let productDetails = '';
-    cartItems.forEach((item) => {
+    const productBlocks = cartItems.map((item) => {
       const itemPrice = Number(item.price) || 0;
       const itemQty = Number(item.quantity) || 1;
       const subtotal = itemPrice * itemQty;
-      productDetails += `Product: ${item.name}\nUnit Price: ${formatMoney(itemPrice)}\nQuantity: ${itemQty}\nSubtotal: ${formatMoney(subtotal)}\n\n`;
+      return `Product: ${item.name}\nUnit Price: ${formatMoney(itemPrice)}\nQuantity: ${itemQty}\nSubtotal: ${formatMoney(subtotal)}`;
     });
 
     const deliveryMethodText = customer.deliveryMethod === 'delivery' ? 'Home Delivery' : 'Store Pickup';
-    const addressSection = customer.deliveryMethod === 'delivery'
-      ? `Address: ${customer.address}\nCity: ${customer.city}`
-      : `Pickup arrangements will be coordinated directly.`;
+    const addressText = customer.deliveryMethod === 'delivery' ? (customer.address || 'N/A') : 'Store Pickup';
+    const cityText = customer.deliveryMethod === 'delivery' ? (customer.city || 'N/A') : 'N/A';
+    const deliveryFeeText = customer.deliveryMethod === 'delivery' ? formatMoney(calculations.deliveryFee) : '$0.00';
 
-    const invoice = `🧾 PUSHINPACKS619 – ORDER INVOICE
+    const invoice = `🧾 NEW ORDER INVOICE
 
-━━━━━━━━━━━━━━━━━━
+Order ID: ${orderId || ''}
+
 PRODUCT DETAILS
+${productBlocks.join('\n\n')}
 
-${productDetails}
-━━━━━━━━━━━━━━━━━━
 CUSTOMER INFORMATION
-
 Full Name: ${customer.fullName}
 WhatsApp: ${customer.phone}
 Email: ${customer.email || 'Not provided'}
 
-━━━━━━━━━━━━━━━━━━
 DELIVERY INFORMATION
-
 Method: ${deliveryMethodText}
-${addressSection}
+Address: ${addressText}
+City: ${cityText}
 
-Delivery Fee: ${customer.deliveryMethod === 'delivery' ? formatMoney(calculations.deliveryFee) : 'FREE'}
-
-━━━━━━━━━━━━━━━━━━
 PAYMENT INFORMATION
-
 Payment Method: ${paymentMethodName}
-
-Additional Notes: ${notes || 'None'}
-
-━━━━━━━━━━━━━━━━━━
-ORDER TOTAL
-
-Total Amount: ${formatMoney(calculations.total)}
-
-Please confirm this order and provide the necessary payment instructions.
-
-Thank you for choosing PushinPacks619!`;
+Delivery Fee: ${deliveryFeeText}
+TOTAL: ${formatMoney(calculations.total)}`;
 
     return invoice;
   };
@@ -322,14 +306,22 @@ Thank you for choosing PushinPacks619!`;
         throw new Error(data.error || 'Failed to process checkout request');
       }
 
-      // Generate invoice from actual checkout data
-      const invoice = generateInvoice();
+      // Order ID from backend response
+      const orderId = data.order?.orderReference || data.order?.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+
+      // Generate invoice in exact requested format
+      const invoice = generateInvoice(orderId);
+
+      // Direct WhatsApp Click-to-Chat URL
+      const targetPhone = '13096411111';
+      const encodedMessage = encodeURIComponent(invoice);
+      const computedWhatsAppUrl = `https://wa.me/${targetPhone}?text=${encodedMessage}`;
 
       // Order successfully created and saved in backend database
       const completedData = {
         order: data.order,
         channel,
-        whatsAppUrl: data.whatsAppUrl,
+        whatsAppUrl: computedWhatsAppUrl,
         telegramUrl: data.telegramUrl
       };
 
@@ -339,11 +331,8 @@ Thank you for choosing PushinPacks619!`;
       updateCart([]);
 
       // 2. Open WhatsApp or Telegram with invoice
-      if (channel === 'whatsapp' && data.whatsAppUrl) {
-        // Encode invoice for WhatsApp
-        const encodedMessage = encodeURIComponent(invoice);
-        const whatsappLink = `${data.whatsAppUrl}&text=${encodedMessage}`;
-        window.open(whatsappLink, '_blank', 'noopener,noreferrer');
+      if (channel === 'whatsapp') {
+        window.open(computedWhatsAppUrl, '_blank', 'noopener,noreferrer');
       } else if (channel === 'telegram' && data.telegramUrl) {
         // For Telegram, send via backend API
         try {
@@ -369,6 +358,16 @@ Thank you for choosing PushinPacks619!`;
 
     } catch (err) {
       console.error('Checkout error:', err);
+      // Fallback: If channel was whatsapp, still allow opening WhatsApp click-to-chat directly
+      if (channel === 'whatsapp') {
+        const fallbackOrderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+        const invoice = generateInvoice(fallbackOrderId);
+        const encodedMessage = encodeURIComponent(invoice);
+        const fallbackWhatsAppUrl = `https://wa.me/13096411111?text=${encodedMessage}`;
+        window.open(fallbackWhatsAppUrl, '_blank', 'noopener,noreferrer');
+        updateCart([]);
+        return;
+      }
       setSubmitError(err.message || 'An unexpected error occurred during checkout');
     } finally {
       setIsSubmitting(false);

@@ -104,7 +104,7 @@ export const SAMPLE_INQUIRIES = [
 // Default Store Configuration
 const DEFAULT_CONFIG = {
   storeName: "PushinPacks",
-  whatsappNumber: "16195550199", // International format without +, spaces, or dashes
+  whatsappNumber: "13096411111", // International format without +, spaces, or dashes
   currency: "USD",
   deliveryFeeUSD: 15.0,
   freeDeliveryThresholdUSD: 200.0,
@@ -231,55 +231,54 @@ function generateOrderReference() {
 // Generate WhatsApp click to chat URL with complete order details
 export function buildWhatsAppOrderMessage({ order, config }) {
   const currency = order.currency || config.currency || "USD";
-  const cleanPhone = (config.whatsappNumber || "16195550199").replace(/[^0-9]/g, "");
+  const cleanPhone = (config.whatsappNumber || "13096411111").replace(/[^0-9]/g, "");
 
-  const lines = [
-    `*NEW ORDER: ${order.orderReference}*`,
-    `Store: ${config.storeName}`,
-    `Date: ${new Date(order.createdAt).toLocaleString()}`,
-    ``,
-    `*CUSTOMER DETAILS:*`,
-    `Name: ${order.customer.fullName}`,
-    `Phone: ${order.customer.phone}`,
-    order.customer.email ? `Email: ${order.customer.email}` : null,
-    `Delivery Method: ${order.delivery.method === "delivery" ? "Home Delivery" : "Store Pickup"}`,
-    order.delivery.method === "delivery"
-      ? `Address: ${order.delivery.address}, ${order.delivery.city}`
-      : `Pickup Location: ${config.storeLocation}`,
-    order.delivery.notes ? `Notes: ${order.delivery.notes}` : null,
-    ``,
-    `*ORDERED ITEMS:*`,
-  ].filter(Boolean);
-
+  const productLines = [];
   order.items.forEach((item, idx) => {
-    lines.push(
-      `${idx + 1}. ${item.productNameSnapshot || item.name || "Item"} (${item.spec || "Standard"})`
-    );
-    lines.push(
-      `   Qty: ${item.quantity} x ${formatCurrency(item.unitPrice, currency)} = ${formatCurrency(item.lineTotal, currency)}`
-    );
+    const itemPrice = Number(item.unitPrice || item.price) || 0;
+    const itemQty = Number(item.quantity) || 1;
+    const subtotal = Number(item.lineTotal || itemPrice * itemQty) || 0;
+    productLines.push(`Product: ${item.productNameSnapshot || item.name || "Item"}`);
+    productLines.push(`Unit Price: ${formatCurrency(itemPrice, currency)}`);
+    productLines.push(`Quantity: ${itemQty}`);
+    productLines.push(`Subtotal: ${formatCurrency(subtotal, currency)}`);
+    if (idx < order.items.length - 1) {
+      productLines.push(``);
+    }
   });
 
-  lines.push(``);
-  lines.push(`*PAYMENT & TOTALS:*`);
-  lines.push(`Payment Method: ${order.paymentMethod.toUpperCase()}`);
-  lines.push(`Subtotal: ${formatCurrency(order.subtotal, currency)}`);
-  lines.push(
-    `Delivery Fee: ${
-      order.deliveryFee > 0 ? formatCurrency(order.deliveryFee, currency) : "Free"
-    }`
-  );
-  if (order.discount > 0) {
-    lines.push(`Discount: -${formatCurrency(order.discount, currency)}`);
-  }
-  lines.push(`*TOTAL: ${formatCurrency(order.total, currency)}*`);
-  lines.push(``);
-  lines.push(`Payment Status: ${order.paymentStatus}`);
-  lines.push(`Please confirm this order and provide dispatch timeline.`);
+  const deliveryMethod = order.delivery?.method === "delivery" ? "Home Delivery" : "Store Pickup";
+  const address = order.delivery?.method === "delivery" ? (order.delivery?.address || "N/A") : "Store Pickup";
+  const city = order.delivery?.method === "delivery" ? (order.delivery?.city || "N/A") : "N/A";
+  const deliveryFee = order.deliveryFee > 0 ? formatCurrency(order.deliveryFee, currency) : "$0.00";
+
+  const lines = [
+    `🧾 NEW ORDER INVOICE`,
+    ``,
+    `Order ID: ${order.orderReference || order.id || ""}`,
+    ``,
+    `PRODUCT DETAILS`,
+    ...productLines,
+    ``,
+    `CUSTOMER INFORMATION`,
+    `Full Name: ${order.customer?.fullName || ""}`,
+    `WhatsApp: ${order.customer?.phone || ""}`,
+    `Email: ${order.customer?.email || "Not provided"}`,
+    ``,
+    `DELIVERY INFORMATION`,
+    `Method: ${deliveryMethod}`,
+    `Address: ${address}`,
+    `City: ${city}`,
+    ``,
+    `PAYMENT INFORMATION`,
+    `Payment Method: ${(order.paymentMethod || "").toUpperCase()}`,
+    `Delivery Fee: ${deliveryFee}`,
+    `TOTAL: ${formatCurrency(order.total, currency)}`,
+  ];
 
   const text = lines.join("\n");
   const encodedText = encodeURIComponent(text);
-  const waUrl = `https://wa.me/${cleanPhone}?text=${encodedText}`;
+  const waUrl = `https://wa.me/${cleanPhone || "13096411111"}?text=${encodedText}`;
 
   return { text, encodedText, waUrl };
 }
