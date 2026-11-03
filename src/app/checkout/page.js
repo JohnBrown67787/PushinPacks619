@@ -392,17 +392,17 @@ Thank you for choosing PushinPacks619!`;
   }, [storeConfig, paymentMethod]);
 
   return (
-    <div className={styles.checkoutPage}>
+    <div className={styles.checkoutPage} suppressHydrationWarning>
       {/* Top Navigation Bar */}
-      <header className={styles.header}>
-        <div className={styles.headerContainer}>
+      <header className={styles.header} suppressHydrationWarning>
+        <div className={styles.headerContainer} suppressHydrationWarning>
           <Link href="/" className={styles.brandLink} aria-label="Return to PushinPacks Hub">
             <span className={styles.brandBadge}>PUSHIN PACKS</span>
             <span className={styles.brandName}>Direct Desk</span>
           </Link>
 
-          <div className={styles.headerMeta}>
-            <div className={styles.secureNotice}>
+          <div className={styles.headerMeta} suppressHydrationWarning>
+            <div className={styles.secureNotice} suppressHydrationWarning>
               <IconLock width={14} height={14} />
               <span className={styles.secureNoticeFull}>SSL Encrypted Checkout</span>
               <span className={styles.secureNoticeMobile}>SSL Encrypted</span>
@@ -412,7 +412,7 @@ Thank you for choosing PushinPacks619!`;
       </header>
 
       {/* Breadcrumb banner */}
-      <div className={styles.topBanner}>
+      <div className={styles.topBanner} suppressHydrationWarning>
         <div>
           <h1 className={styles.pageTitle}>Express Checkout</h1>
           <p className={styles.pageSubtitle}>Direct encrypted inquiry & dispatch coordination</p>
