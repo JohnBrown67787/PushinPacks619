@@ -576,3 +576,16 @@ img, video, canvas, svg {
     --space-4xl: 44px;
   }
 }
+
+/* Logo Sizing Safeguards */
+.navLogoImg,
+.brandLogo,
+.drawerLogoImg {
+  width: 32px;
+  height: 32px;
+  max-width: 36px;
+  max-height: 36px;
+  object-fit: cover !important;
+  flex-shrink: 0 !important;
+  display: inline-block;
+}

@@ -34,7 +34,14 @@
 }
 
 .navLogoImg {
+  width: 34px !important;
+  height: 34px !important;
+  max-width: 34px !important;
+  max-height: 34px !important;
   border-radius: 8px;
+  flex-shrink: 0;
+  object-fit: cover;
+  display: block;
 }
 
 .navBrand {

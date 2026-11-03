@@ -284,6 +284,7 @@ export default function CatalogView({ catalog }) {
               alt="PushinPacks Logo"
               width={34}
               height={34}
+              style={{ width: "34px", height: "34px", minWidth: "34px", maxWidth: "34px", borderRadius: "8px", flexShrink: 0, objectFit: "cover" }}
               className={styles.navLogoImg}
               priority
               unoptimized

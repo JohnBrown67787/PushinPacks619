@@ -33,8 +33,15 @@
 }
 
 .brandLogo {
+  width: 36px !important;
+  height: 36px !important;
+  max-width: 36px !important;
+  max-height: 36px !important;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+  object-fit: cover;
+  display: block;
 }
 
 .brandName {

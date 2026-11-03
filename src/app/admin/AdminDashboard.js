@@ -651,6 +651,7 @@ export default function AdminDashboard() {
               width={36}
               height={36}
               className={styles.brandLogo}
+              style={{ width: "36px", height: "36px", minWidth: "36px", maxWidth: "36px", borderRadius: "8px", flexShrink: 0, objectFit: "cover" }}
               priority
               unoptimized
             />

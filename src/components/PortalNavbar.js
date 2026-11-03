@@ -72,8 +72,9 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
               <Image
                 src="/logo.jpg"
                 alt="PushinPacks Logo"
-                width={30}
-                height={30}
+                width={32}
+                height={32}
+                style={{ width: "32px", height: "32px", minWidth: "32px", maxWidth: "32px", borderRadius: "6px", flexShrink: 0, objectFit: "cover" }}
                 className={styles.navLogoImg}
                 priority
                 unoptimized
@@ -205,7 +206,8 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                   alt="Logo"
                   width={28}
                   height={28}
-                  style={{ borderRadius: "6px" }}
+                  className={styles.drawerLogoImg}
+                  style={{ width: "28px", height: "28px", minWidth: "28px", maxWidth: "28px", borderRadius: "6px", flexShrink: 0, objectFit: "cover" }}
                   unoptimized
                 />
                 <div>
