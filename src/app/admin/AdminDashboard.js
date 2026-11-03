@@ -644,18 +644,20 @@ export default function AdminDashboard() {
       {/* Top Admin Header */}
       <header className={styles.adminHeader}>
         <div className={styles.headerLeft}>
-          <Image
-            src="/logo.jpg"
-            alt="PushinPacks Logo"
-            width={36}
-            height={36}
-            className={styles.brandLogo}
-            priority
-          />
-          <div>
-            <span className={styles.brandTitle}>PUSHINPACKS619</span>
-            <div style={{ fontSize: "var(--text-2xs)", color: "var(--color-text-muted)", letterSpacing: "1px", textTransform: "uppercase" }}>
-              Dynamic Administration Console
+          <div className={styles.headerBrandRow}>
+            <Image
+              src="/logo.jpg"
+              alt="PushinPacks Logo"
+              width={36}
+              height={36}
+              className={styles.brandLogo}
+              priority
+            />
+            <div>
+              <span className={styles.brandTitle}>PUSHINPACKS619</span>
+              <div style={{ fontSize: "var(--text-2xs)", color: "var(--color-text-muted)", letterSpacing: "1px", textTransform: "uppercase" }}>
+                Dynamic Administration Console
+              </div>
             </div>
           </div>
           <span className={styles.headerBadge}>
@@ -674,7 +676,8 @@ export default function AdminDashboard() {
               title="Click to populate sample demonstration inquiries and order"
             >
               <IconRefresh size={14} color="#050507" />
-              <span>Initialize Data</span>
+              <span className={styles.headerBtnTextFull}>Initialize Data</span>
+              <span className={styles.headerBtnTextMobile}>Initialize</span>
             </button>
           ) : (
             <button
@@ -684,12 +687,14 @@ export default function AdminDashboard() {
               title="Reset all dynamic inquiries and orders to zero"
             >
               <IconTrash size={14} color="currentColor" />
-              <span>Clear Data</span>
+              <span className={styles.headerBtnTextFull}>Clear Data</span>
+              <span className={styles.headerBtnTextMobile}>Clear</span>
             </button>
           )}
 
           <Link href="/" target="_blank" className={styles.secondaryBtn}>
-            <span>View Public Hub</span>
+            <span className={styles.headerBtnTextFull}>View Public Hub</span>
+            <span className={styles.headerBtnTextMobile}>Hub</span>
             <IconArrowRight size={14} color="var(--color-text-muted)" />
           </Link>
 
@@ -786,7 +791,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.06)", paddingTop: "16px", paddingLeft: "10px", paddingRight: "10px" }}>
+          <div className={styles.sidebarFooter} style={{ borderTop: "1px solid rgba(255, 255, 255, 0.06)", paddingTop: "16px", paddingLeft: "10px", paddingRight: "10px" }}>
             <div style={{ fontSize: "var(--text-2xs)", color: "var(--color-text-dim)", lineHeight: 1.5 }}>
               PushinPacks Dynamic Engine
               <br />
