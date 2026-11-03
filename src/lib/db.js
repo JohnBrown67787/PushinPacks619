@@ -283,6 +283,61 @@ export function buildWhatsAppOrderMessage({ order, config }) {
   return { text, encodedText, waUrl };
 }
 
+// Generate Telegram click to chat message with complete order details
+export function buildTelegramOrderMessage({ order, config }) {
+  const currency = order.currency || config.currency || "USD";
+
+  const productLines = [];
+  order.items.forEach((item, idx) => {
+    const itemPrice = Number(item.unitPrice || item.price) || 0;
+    const itemQty = Number(item.quantity) || 1;
+    const subtotal = Number(item.lineTotal || itemPrice * itemQty) || 0;
+    productLines.push(`Product: ${item.productNameSnapshot || item.name || "Item"}`);
+    productLines.push(`Unit Price: ${formatCurrency(itemPrice, currency)}`);
+    productLines.push(`Quantity: ${itemQty}`);
+    productLines.push(`Subtotal: ${formatCurrency(subtotal, currency)}`);
+    if (idx < order.items.length - 1) {
+      productLines.push(``);
+    }
+  });
+
+  const deliveryMethod = order.delivery?.method === "delivery" ? "Home Delivery" : "Store Pickup";
+  const address = order.delivery?.method === "delivery" ? (order.delivery?.address || "N/A") : "Store Pickup";
+  const city = order.delivery?.method === "delivery" ? (order.delivery?.city || "N/A") : "N/A";
+  const deliveryFee = order.deliveryFee > 0 ? formatCurrency(order.deliveryFee, currency) : "$0.00";
+
+  const lines = [
+    `🧾 NEW ORDER INVOICE`,
+    ``,
+    `Order ID: ${order.orderReference || order.id || ""}`,
+    ``,
+    `PRODUCT DETAILS`,
+    ...productLines,
+    ``,
+    `CUSTOMER INFORMATION`,
+    `Full Name: ${order.customer?.fullName || ""}`,
+    `Telegram : ${order.customer?.phone || ""}`,
+    `Email: ${order.customer?.email || "Not provided"}`,
+    ``,
+    `DELIVERY INFORMATION`,
+    `Method: ${deliveryMethod}`,
+    `Address: ${address}`,
+    `City: ${city}`,
+    ``,
+    `PAYMENT INFORMATION`,
+    `Payment Method: ${(order.paymentMethod || "").toUpperCase()}`,
+    `Delivery Fee: ${deliveryFee}`,
+    `TOTAL: ${formatCurrency(order.total, currency)}`,
+  ];
+
+  const text = lines.join("\n");
+  const encodedText = encodeURIComponent(text);
+  const telegramUrl = "https://t.me/packmans619_1";
+
+  return { text, encodedText, telegramUrl };
+}
+
+
 // Create and validate new order (Server-Side)
 export async function createOrder(payload) {
   ensureFiles();
@@ -405,16 +460,22 @@ export async function createOrder(payload) {
     createdAt,
   };
 
-  // Generate WhatsApp message and URL
+  // Generate WhatsApp and Telegram messages and URLs
   const { text: whatsappMessage, waUrl: whatsAppUrl } = buildWhatsAppOrderMessage({
+    order: newOrder,
+    config,
+  });
+
+  const { text: telegramMessage, telegramUrl } = buildTelegramOrderMessage({
     order: newOrder,
     config,
   });
 
   newOrder.whatsappMessage = whatsappMessage;
   newOrder.whatsappUrl = whatsAppUrl;
+  newOrder.telegramMessage = telegramMessage;
+  newOrder.telegramUrl = telegramUrl;
   newOrder.checkoutChannel = channel;
-  newOrder.telegramUrl = config.telegramNumber || "https://t.me/packmans619_1";
 
   // Persist order to database
   const orders = getAllOrders();

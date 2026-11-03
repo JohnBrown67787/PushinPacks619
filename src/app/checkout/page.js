@@ -77,6 +77,15 @@ export default function CheckoutPage() {
   // Order confirmation modal state
   const [completedOrder, setCompletedOrder] = useState(null);
   const [copiedRef, setCopiedRef] = useState(false);
+  const [copiedInvoice, setCopiedInvoice] = useState(false);
+
+  const handleCopyInvoice = (text) => {
+    if (navigator?.clipboard?.writeText && text) {
+      navigator.clipboard.writeText(text);
+      setCopiedInvoice(true);
+      setTimeout(() => setCopiedInvoice(false), 2500);
+    }
+  };
 
   // 1. Fetch store configuration on mount
   useEffect(() => {
@@ -220,7 +229,7 @@ export default function CheckoutPage() {
   };
 
   // Generate professional invoice in exact specified order format
-  const generateInvoice = (orderId) => {
+  const generateInvoice = (orderId, channel = 'whatsapp') => {
     const paymentMethodName = selectedPaymentInfo?.name || paymentMethod;
 
     // Build product details section
@@ -236,6 +245,10 @@ export default function CheckoutPage() {
     const cityText = customer.deliveryMethod === 'delivery' ? (customer.city || 'N/A') : 'N/A';
     const deliveryFeeText = customer.deliveryMethod === 'delivery' ? formatMoney(calculations.deliveryFee) : '$0.00';
 
+    const customerContactLine = channel === 'telegram'
+      ? `Telegram : ${customer.phone}`
+      : `WhatsApp: ${customer.phone}`;
+
     const invoice = `🧾 NEW ORDER INVOICE
 
 Order ID: ${orderId || ''}
@@ -245,7 +258,7 @@ ${productBlocks.join('\n\n')}
 
 CUSTOMER INFORMATION
 Full Name: ${customer.fullName}
-WhatsApp: ${customer.phone}
+${customerContactLine}
 Email: ${customer.email || 'Not provided'}
 
 DELIVERY INFORMATION
@@ -309,20 +322,22 @@ TOTAL: ${formatMoney(calculations.total)}`;
       // Order ID from backend response
       const orderId = data.order?.orderReference || data.order?.id || `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
 
-      // Generate invoice in exact requested format
-      const invoice = generateInvoice(orderId);
+      // Generate invoice in exact requested format for selected channel
+      const invoice = generateInvoice(orderId, channel);
 
       // Direct WhatsApp Click-to-Chat URL
       const targetPhone = '13096411111';
       const encodedMessage = encodeURIComponent(invoice);
       const computedWhatsAppUrl = `https://wa.me/${targetPhone}?text=${encodedMessage}`;
+      const telegramLink = 'https://t.me/packmans619_1';
 
       // Order successfully created and saved in backend database
       const completedData = {
         order: data.order,
         channel,
+        invoice,
         whatsAppUrl: computedWhatsAppUrl,
-        telegramUrl: data.telegramUrl
+        telegramUrl: telegramLink
       };
 
       setCompletedOrder(completedData);
@@ -333,38 +348,47 @@ TOTAL: ${formatMoney(calculations.total)}`;
       // 2. Open WhatsApp or Telegram with invoice
       if (channel === 'whatsapp') {
         window.open(computedWhatsAppUrl, '_blank', 'noopener,noreferrer');
-      } else if (channel === 'telegram' && data.telegramUrl) {
-        // For Telegram, send via backend API
+      } else if (channel === 'telegram') {
+        // Copy invoice to user clipboard for immediate pasting in Telegram chat
+        if (navigator?.clipboard?.writeText) {
+          navigator.clipboard.writeText(invoice).catch(() => {});
+        }
+
+        // Send via backend Telegram endpoint if bot configured
         try {
-          const telegramRes = await fetch('/api/telegram', {
+          await fetch('/api/telegram', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              orderReference: data.order?.orderReference,
+              orderReference: orderId,
               invoice
             })
           });
-
-          if (telegramRes.ok) {
-            // Open Telegram app/web
-            window.open(data.telegramUrl, '_blank', 'noopener,noreferrer');
-          }
         } catch (err) {
           console.error('Telegram notification failed:', err);
-          // Still open Telegram for user to send message manually
-          window.open(data.telegramUrl, '_blank', 'noopener,noreferrer');
         }
+
+        // Open Telegram direct chat
+        window.open(telegramLink, '_blank', 'noopener,noreferrer');
       }
 
     } catch (err) {
       console.error('Checkout error:', err);
-      // Fallback: If channel was whatsapp, still allow opening WhatsApp click-to-chat directly
+      // Fallback: If channel was whatsapp or telegram, still allow opening chat directly
+      const fallbackOrderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+      const invoice = generateInvoice(fallbackOrderId, channel);
+      const encodedMessage = encodeURIComponent(invoice);
+
       if (channel === 'whatsapp') {
-        const fallbackOrderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
-        const invoice = generateInvoice(fallbackOrderId);
-        const encodedMessage = encodeURIComponent(invoice);
         const fallbackWhatsAppUrl = `https://wa.me/13096411111?text=${encodedMessage}`;
         window.open(fallbackWhatsAppUrl, '_blank', 'noopener,noreferrer');
+        updateCart([]);
+        return;
+      } else if (channel === 'telegram') {
+        if (navigator?.clipboard?.writeText) {
+          navigator.clipboard.writeText(invoice).catch(() => {});
+        }
+        window.open('https://t.me/packmans619_1', '_blank', 'noopener,noreferrer');
         updateCart([]);
         return;
       }
@@ -993,7 +1017,9 @@ TOTAL: ${formatMoney(calculations.total)}`;
             {/* Seller Confirmation Notice */}
             <div className={styles.modalInstructions}>
               <strong>Important Next Step:</strong>
-              Please ensure you send the prefilled WhatsApp message. Your order is pending verification and is only marked as paid once payment is confirmed directly by the seller.
+              {completedOrder.channel === 'telegram'
+                ? 'Your order invoice has been copied to your clipboard. Send it directly in your chat with @packmans619_1 on Telegram to finalize payment and dispatch.'
+                : 'Please ensure you send the prefilled WhatsApp message. Your order is pending verification and is only marked as paid once payment is confirmed directly by the seller.'}
               <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', fontSize: '12px', color: '#94a3b8' }}>
                 Support Email: <a href="mailto:Pushinpacks30@gmail.com" style={{ color: '#ffffff', textDecoration: 'none', fontWeight: 600 }}>Pushinpacks30@gmail.com</a>
                 <span style={{ margin: '0 8px' }}>•</span>
@@ -1014,6 +1040,27 @@ TOTAL: ${formatMoney(calculations.total)}`;
                     <IconTelegram size={20} />
                     <span>Open Telegram Chat Now</span>
                   </a>
+
+                  {completedOrder.invoice && (
+                    <button
+                      type="button"
+                      onClick={() => handleCopyInvoice(completedOrder.invoice)}
+                      className={styles.modalOpenTelegramBtn}
+                      style={{ background: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.2)', color: '#ffffff', boxShadow: 'none' }}
+                    >
+                      {copiedInvoice ? (
+                        <>
+                          <IconCheck width={18} height={18} color="#10b981" />
+                          <span>Invoice Copied to Clipboard</span>
+                        </>
+                      ) : (
+                        <>
+                          <IconCopy width={18} height={18} />
+                          <span>Copy Order Invoice</span>
+                        </>
+                      )}
+                    </button>
+                  )}
 
                   {completedOrder.whatsAppUrl && (
                     <a
