@@ -76,6 +76,7 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                 height={30}
                 className={styles.navLogoImg}
                 priority
+                unoptimized
               />
               <span className={styles.navBrand}>
                 PushinPacks <span className={styles.navBrandSub}>/ {catalog.name}</span>
@@ -205,6 +206,7 @@ export default function PortalNavbar({ catalog, activeTab, cartCount = 0, onOpen
                   width={28}
                   height={28}
                   style={{ borderRadius: "6px" }}
+                  unoptimized
                 />
                 <div>
                   <div className={styles.drawerBrandTitle}>PushinPacks</div>

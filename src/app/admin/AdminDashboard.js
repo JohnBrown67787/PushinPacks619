@@ -652,6 +652,7 @@ export default function AdminDashboard() {
               height={36}
               className={styles.brandLogo}
               priority
+              unoptimized
             />
             <div>
               <span className={styles.brandTitle}>PUSHINPACKS619</span>

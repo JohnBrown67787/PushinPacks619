@@ -90,6 +90,7 @@ export default function Home() {
             style={{ width: "36px", height: "36px", borderRadius: "8px", flexShrink: 0, objectFit: "cover" }}
             className={styles.navLogoImg}
             priority
+            unoptimized
           />
           <span className={styles.navBrand}>PUSHINPACKS619</span>
         </Link>

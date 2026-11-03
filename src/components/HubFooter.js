@@ -27,6 +27,7 @@ export default function HubFooter() {
                 height={36}
                 loading="lazy"
                 className={styles.brandLogo}
+                unoptimized
               />
               <span className={styles.brandName}>PUSHINPACKS619</span>
             </div>

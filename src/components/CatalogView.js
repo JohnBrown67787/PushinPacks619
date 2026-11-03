@@ -286,6 +286,7 @@ export default function CatalogView({ catalog }) {
               height={34}
               className={styles.navLogoImg}
               priority
+              unoptimized
             />
             <span className={styles.navBrand}>
               PushinPacks <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>/ {catalog.name}</span>
